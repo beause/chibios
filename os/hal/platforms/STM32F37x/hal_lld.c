@@ -135,10 +135,10 @@ void hal_lld_init(void) {
 
   /* SYSCFG clock enabled here because it is a multi-functional unit shared
      among multiple drivers.*/
-  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, TRUE);
+  rccEnableAPB2(RCC_APB2ENR_SYSCFGEN, TRUE); /* checked ALVIN */
 
   /* USB IRQ relocated to not conflict with CAN.*/
-  SYSCFG->CFGR1 |= SYSCFG_CFGR1_USB_IT_RMP;
+  /*  SYSCFG->CFGR1 |= SYSCFG_CFGR1_USB_IT_RMP;  Doesn't apply to 32F373 ALVIN */
 }
 
 /**
@@ -185,10 +185,10 @@ void stm32_clock_init(void) {
   RCC->CFGR  = STM32_MCOSEL    | STM32_USBPRE    | STM32_PLLMUL   |
                STM32_PLLSRC    | STM32_PPRE1     | STM32_PPRE2    |
                STM32_HPRE;
-  RCC->CFGR2 = STM32_ADC34PRES | STM32_ADC12PRES | STM32_PREDIV;
-  RCC->CFGR3 = STM32_UART5SW   | STM32_UART4SW   | STM32_USART3SW |
-               STM32_USART2SW  | STM32_TIM8SW    | STM32_TIM1SW   |
-               STM32_I2C2SW    | STM32_I2C1SW    | STM32_USART1SW;
+  RCC->CFGR2 = STM32_PREDIV; /* ALVIN */
+  RCC->CFGR3 = STM32_USART3SW | STM32_USART2SW | STM32_I2C2SW| STM32_I2C1SW | STM32_USART1SW;  /* ALVIN */
+  RCC->AHBENR |= RCC_AHBENR_GPIOCEN; /* Enable GPIOC - for LEDs ALVIN */
+
 
 #if STM32_ACTIVATE_PLL
   /* PLL activation.*/
