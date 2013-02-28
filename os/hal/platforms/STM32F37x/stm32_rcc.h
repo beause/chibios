@@ -135,8 +135,8 @@
  *
  * @api
  */
-#define rccEnableAHB(mask, lp) {                                            \
-  RCC->AHBENR |= (mask);                                                    \
+#define rccEnableAHB(mask) {                                            \
+  RCC->AHBENR |= (mask);                                                \
 }
 
 /**
@@ -147,8 +147,8 @@
  *
  * @api
  */
-#define rccDisableAHB(mask, lp) {                                           \
-  RCC->AHBENR &= ~(mask);                                                   \
+#define rccDisableAHB(mask) {                                           \
+  RCC->AHBENR &= ~(mask);                                               \
 }
 
 /**
@@ -664,6 +664,32 @@
  */
 #define rccResetUSB() rccResetAPB1(RCC_APB1RSTR_USBRST)
 /** @} */
+
+/**
+ * @name    AHB peripherals specific RCC operations
+ * @{
+ */
+#define rccEnableSRAMEN()  rccEnableAHB(RCC_AHBENR_SRAMEN)
+#define rccEnableFLITFEN() rccEnableAHB(RCC_AHBENR_FLITFEN)
+#define rccEnableCRCEN()   rccEnableAHB(RCC_AHBENR_CRCEN)
+#define rccEnableGPIOAEN() rccEnableAHB(RCC_AHBENR_GPIOAEN)
+#define rccEnableGPIOBEN() rccEnableAHB(RCC_AHBENR_GPIOBEN)
+#define rccEnableGPIOCEN() rccEnableAHB(RCC_AHBENR_GPIOCEN)
+#define rccEnableGPIODEN() rccEnableAHB(RCC_AHBENR_GPIODEN)
+#define rccEnableGPIOEEN() rccEnableAHB(RCC_AHBENR_GPIOEEN)
+#define rccEnableGPIOFEN() rccEnableAHB(RCC_AHBENR_GPIOFEN)
+#define rccEnableTSEN()    rccEnableAHB(RCC_AHBENR_TSEN)
+
+#define rccDisableSRAMEN()  rccDisableAHB(RCC_AHBENR_SRAMEN)
+#define rccDisableFLITFEN() rccDisableAHB(RCC_AHBENR_FLITFEN)
+#define rccDisableCRCEN()   rccDisableAHB(RCC_AHBENR_CRCEN)
+#define rccDisableGPIOAEN() rccDisableAHB(RCC_AHBENR_GPIOAEN)
+#define rccDisableGPIOBEN() rccDisableAHB(RCC_AHBENR_GPIOBEN)
+#define rccDisableGPIOCEN() rccDisableAHB(RCC_AHBENR_GPIOCEN)
+#define rccDisableGPIODEN() rccDisableAHB(RCC_AHBENR_GPIODEN)
+#define rccDisableGPIOEEN() rccDisableAHB(RCC_AHBENR_GPIOEEN)
+#define rccDisableGPIOFEN() rccDisableAHB(RCC_AHBENR_GPIOFEN)
+#define rccDisableTSEN()    rccDisableAHB(RCC_AHBENR_TSEN)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
