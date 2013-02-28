@@ -1,0 +1,11 @@
+*~
+*.o
+*.d
+*.elf
+*.ch
+*.hex
+*.bin
+.dep
+.project
+alvinnotes.txt
+build
