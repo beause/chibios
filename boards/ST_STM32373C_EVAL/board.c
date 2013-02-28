@@ -104,5 +104,6 @@ bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
  */
 void boardInit(void) {
   rccEnableGPIOCEN();
-
+  rccEnableGPIODEN(); /* for LCD CS */
+  rccEnableSPI3(0);
 }

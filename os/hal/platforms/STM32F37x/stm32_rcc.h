@@ -135,7 +135,7 @@
  *
  * @api
  */
-#define rccEnableAHB(mask) {                                            \
+#define rccEnableAHB(mask, lp) {					\
   RCC->AHBENR |= (mask);                                                \
 }
 
@@ -147,7 +147,7 @@
  *
  * @api
  */
-#define rccDisableAHB(mask) {                                           \
+#define rccDisableAHB(mask, lp) {					\
   RCC->AHBENR &= ~(mask);                                               \
 }
 
@@ -669,27 +669,27 @@
  * @name    AHB peripherals specific RCC operations
  * @{
  */
-#define rccEnableSRAMEN()  rccEnableAHB(RCC_AHBENR_SRAMEN)
-#define rccEnableFLITFEN() rccEnableAHB(RCC_AHBENR_FLITFEN)
-#define rccEnableCRCEN()   rccEnableAHB(RCC_AHBENR_CRCEN)
-#define rccEnableGPIOAEN() rccEnableAHB(RCC_AHBENR_GPIOAEN)
-#define rccEnableGPIOBEN() rccEnableAHB(RCC_AHBENR_GPIOBEN)
-#define rccEnableGPIOCEN() rccEnableAHB(RCC_AHBENR_GPIOCEN)
-#define rccEnableGPIODEN() rccEnableAHB(RCC_AHBENR_GPIODEN)
-#define rccEnableGPIOEEN() rccEnableAHB(RCC_AHBENR_GPIOEEN)
-#define rccEnableGPIOFEN() rccEnableAHB(RCC_AHBENR_GPIOFEN)
-#define rccEnableTSEN()    rccEnableAHB(RCC_AHBENR_TSEN)
+#define rccEnableSRAMEN()  rccEnableAHB(RCC_AHBENR_SRAMEN, 0)
+#define rccEnableFLITFEN() rccEnableAHB(RCC_AHBENR_FLITFEN, 0)
+#define rccEnableCRCEN()   rccEnableAHB(RCC_AHBENR_CRCEN, 0)
+#define rccEnableGPIOAEN() rccEnableAHB(RCC_AHBENR_GPIOAEN, 0)
+#define rccEnableGPIOBEN() rccEnableAHB(RCC_AHBENR_GPIOBEN, 0)
+#define rccEnableGPIOCEN() rccEnableAHB(RCC_AHBENR_GPIOCEN, 0)
+#define rccEnableGPIODEN() rccEnableAHB(RCC_AHBENR_GPIODEN, 0)
+#define rccEnableGPIOEEN() rccEnableAHB(RCC_AHBENR_GPIOEEN, 0)
+#define rccEnableGPIOFEN() rccEnableAHB(RCC_AHBENR_GPIOFEN, 0)
+#define rccEnableTSEN()    rccEnableAHB(RCC_AHBENR_TSEN, 0)
 
-#define rccDisableSRAMEN()  rccDisableAHB(RCC_AHBENR_SRAMEN)
-#define rccDisableFLITFEN() rccDisableAHB(RCC_AHBENR_FLITFEN)
-#define rccDisableCRCEN()   rccDisableAHB(RCC_AHBENR_CRCEN)
-#define rccDisableGPIOAEN() rccDisableAHB(RCC_AHBENR_GPIOAEN)
-#define rccDisableGPIOBEN() rccDisableAHB(RCC_AHBENR_GPIOBEN)
-#define rccDisableGPIOCEN() rccDisableAHB(RCC_AHBENR_GPIOCEN)
-#define rccDisableGPIODEN() rccDisableAHB(RCC_AHBENR_GPIODEN)
-#define rccDisableGPIOEEN() rccDisableAHB(RCC_AHBENR_GPIOEEN)
-#define rccDisableGPIOFEN() rccDisableAHB(RCC_AHBENR_GPIOFEN)
-#define rccDisableTSEN()    rccDisableAHB(RCC_AHBENR_TSEN)
+#define rccDisableSRAMEN()  rccDisableAHB(RCC_AHBENR_SRAMEN, 0)
+#define rccDisableFLITFEN() rccDisableAHB(RCC_AHBENR_FLITFEN, 0)
+#define rccDisableCRCEN()   rccDisableAHB(RCC_AHBENR_CRCEN, 0)
+#define rccDisableGPIOAEN() rccDisableAHB(RCC_AHBENR_GPIOAEN, 0)
+#define rccDisableGPIOBEN() rccDisableAHB(RCC_AHBENR_GPIOBEN, 0)
+#define rccDisableGPIOCEN() rccDisableAHB(RCC_AHBENR_GPIOCEN, 0)
+#define rccDisableGPIODEN() rccDisableAHB(RCC_AHBENR_GPIODEN, 0)
+#define rccDisableGPIOEEN() rccDisableAHB(RCC_AHBENR_GPIOEEN, 0)
+#define rccDisableGPIOFEN() rccDisableAHB(RCC_AHBENR_GPIOFEN, 0)
+#define rccDisableTSEN()    rccDisableAHB(RCC_AHBENR_TSEN, 0)
 
 /*===========================================================================*/
 /* External declarations.                                                    */
