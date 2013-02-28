@@ -46,6 +46,23 @@ static msg_t Thread1(void *arg) {
   }
 }
 
+#ifdef SPI_ACTIVATE
+
+/*
+ * SPI configuration structure.
+ * Maximum speed (12MHz), CPHA=0, CPOL=0, 16bits frames, MSb transmitted first.
+ * The slave select line is the pin GPIOA_SPI1NSS on the port GPIOA.
+ */
+static const SPIConfig spicfg = {
+  spicb,
+  /* HW dependent part.*/
+  GPIOA,
+  GPIOA_SPI1NSS,
+  SPI_CR1_DFF
+};
+
+#endif
+
 /*
  * Application entry point.
  */
@@ -61,14 +78,18 @@ int main(void) {
   halInit();
   chSysInit();
 
+#ifdef SPI_ACTIVATE
+  /*
+   * Initializes the SPI driver 1.
+   */
+  spiStart(&SPID3, &spicfg);
+#endif
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
    * PA9(TX) and PA10(RX) are routed to USART1.
    */
-  sdStart(&SD1, NULL);
-  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
-  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
+  sdStart(&SD2, NULL);
 
   /*
    * Creates the example thread.
@@ -82,7 +103,7 @@ int main(void) {
    */
   while (TRUE) {
     if (palReadPad(GPIOA, GPIOA_KEY_BUTTON))
-      TestThread(&SD1);
+      TestThread(&SD2);
     chThdSleepMilliseconds(500);
   }
 }
