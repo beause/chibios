@@ -83,6 +83,7 @@ union test_buffers {
 #ifdef __cplusplus
 extern "C" {
 #endif
+  void setStreamDest(void *p);
   msg_t TestThread(void *p);
   void test_printn(uint32_t n);
   void test_print(const char *msgp);

@@ -318,7 +318,8 @@ static void print_line(void) {
 msg_t TestThread(void *p) {
   int i, j;
 
-  chp = p;
+  setStreamDest(p);
+
   test_println("");
   test_println("*** ChibiOS/RT test suite");
   test_println("***");
@@ -389,6 +390,10 @@ msg_t TestThread(void *p) {
     test_println("SUCCESS");
 
   return (msg_t)global_fail;
+}
+
+void setStreamDest(void *p) {
+  chp = p;
 }
 
 /** @} */

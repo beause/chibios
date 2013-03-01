@@ -181,7 +181,7 @@ void stm32_clock_init(void) {
   /* Clock settings.*/
   RCC->CFGR  = STM32_MCOSEL    | STM32_USBPRE    | STM32_PLLMUL   |
                STM32_PLLSRC    | STM32_PPRE1     | STM32_PPRE2    |
-               STM32_HPRE;
+               STM32_HPRE | STM32_ADCPRE;
   RCC->CFGR2 = STM32_PREDIV;
   RCC->CFGR3 = STM32_USART3SW | STM32_USART2SW | STM32_I2C2SW| STM32_I2C1SW | STM32_USART1SW;
 

@@ -940,19 +940,16 @@
 #else
 #error "invalid STM32_ADCPRE value specified"
 #endif
-/* ALVIN - FIX/REMOVE */
-#if 0
+
 /* ADC maximum frequency check.*/
 #if STM32_ADCLK > STM32_ADCCLK_MAX
 #error "STM32_ADCLK exceeding maximum frequency (STM32_ADCCLK_MAX)"
 #endif
 
 /* ADC minimum frequency check.*/
-#if STM32ADCLK < STM32_ADCCLK_MIN
+#if STM32_ADCLK < STM32_ADCCLK_MIN
 #error "STM32_ADCLK below minimum frequency (STM32_ADCCLK_MIN)"
 #endif
-#endif
-/* ALVIN - FIX/REMOVE */
 
 /**
  * @brief   I2C1 frequency.

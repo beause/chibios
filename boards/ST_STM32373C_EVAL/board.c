@@ -106,6 +106,7 @@ bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
  */
 void boardInit(void) {
   rccEnableGPIOAEN(); /* For Key button input */
+  rccEnableGPIOBEN(); /* For ADC Pot input */
   rccEnableGPIOCEN(); /* For SPI3 output */
   rccEnableGPIODEN(); /* for LCD CS */
   rccEnableSPI3(0);
