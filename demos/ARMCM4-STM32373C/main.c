@@ -137,15 +137,7 @@ int main(void) {
   halInit();
   chSysInit();
 
-
-  /*
-   * Activates the serial driver 2 using the driver default configuration.
-   * PA9(TX) and PA10(RX) are routed to USART1.
-   */
   sdStart(&SD2, NULL);
-  palSetPadMode(GPIOA, 9, PAL_MODE_ALTERNATE(7));
-  palSetPadMode(GPIOA, 10, PAL_MODE_ALTERNATE(7));
-
   spiStart(&SPID3, &spicfg );
 
   /*

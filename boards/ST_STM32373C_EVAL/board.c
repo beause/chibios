@@ -98,12 +98,16 @@ bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
 }
 #endif
 
+#define DUMMY_NOT_USED 0xdeadbeef
+
 /**
  * @brief   Board-specific initialization code.
  * @todo    Add your board-specific code, if any.
  */
 void boardInit(void) {
-  rccEnableGPIOCEN();
+  rccEnableGPIOAEN(); /* For Key button input */
+  rccEnableGPIOCEN(); /* For SPI3 output */
   rccEnableGPIODEN(); /* for LCD CS */
   rccEnableSPI3(0);
+  rccEnableUSART2(DUMMY_NOT_USED);
 }
