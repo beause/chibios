@@ -46,23 +46,6 @@ static msg_t Thread1(void *arg) {
   }
 }
 
-#ifdef SPI_ACTIVATE
-
-/*
- * SPI configuration structure.
- * Maximum speed (12MHz), CPHA=0, CPOL=0, 16bits frames, MSb transmitted first.
- * The slave select line is the pin GPIOA_SPI1NSS on the port GPIOA.
- */
-static const SPIConfig spicfg = {
-  spicb,
-  /* HW dependent part.*/
-  GPIOA,
-  GPIOA_SPI1NSS,
-  SPI_CR1_DFF
-};
-
-#endif
-
 /*
  * Application entry point.
  */
@@ -77,13 +60,6 @@ int main(void) {
    */
   halInit();
   chSysInit();
-
-#ifdef SPI_ACTIVATE
-  /*
-   * Initializes the SPI driver 1.
-   */
-  spiStart(&SPID3, &spicfg);
-#endif
 
   /*
    * Activates the serial driver 1 using the driver default configuration.
