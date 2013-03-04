@@ -50,7 +50,7 @@ MACDriver ETHD1;
 #endif
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -88,7 +88,7 @@ void mac_lld_init(void) {
 void mac_lld_start(MACDriver *macp) {
 
   if (macp->state == MAC_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_MAC_USE_MAC1
     if (&MACD1 == macp) {
 

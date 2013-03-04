@@ -47,7 +47,7 @@ EXTDriver EXTD1;
 #endif
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -85,7 +85,7 @@ void ext_lld_init(void) {
 void ext_lld_start(EXTDriver *extp) {
 
   if (extp->state == EXT_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_EXT_USE_EXT1
     if (&EXTD1 == extp) {
 

@@ -186,7 +186,7 @@
  * PA4  - PIN4                      (input pullup).
  * PA5  - PIN5                      (input floating).
  * PA6  - PIN6                      (input pullup).
- * PA7  - COMP2 OUT                 (output pushpull maximum).
+ * PA7  - COMP2_OUT                 (output pushpull maximum).
  * PA8  - I2C2_SMB                  (input floating).
  * PA9  - I2C2_SCL                  (alternate 4).
  * PA10 - I2C2_SDA                  (alternate 4).

@@ -564,7 +564,7 @@
  * @brief   ADC prescaler value.
  */
 #if !defined(STM32_ADCPRE) || defined(__DOXYGEN__)
-#define STM32_ADCPRE                        STM32_ADCPRE_DIV2
+#define STM32_ADCPRE                        STM32_ADCPRE_DIV4
 #endif
 
 /**

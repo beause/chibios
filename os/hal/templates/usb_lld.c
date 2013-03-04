@@ -47,7 +47,7 @@ USBDriver USBD1;
 #endif
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 /**
@@ -81,7 +81,7 @@ static const USBEndpointConfig ep0config = {
 };
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -119,7 +119,7 @@ void usb_lld_init(void) {
 void usb_lld_start(USBDriver *usbp) {
 
   if (usbp->state == USB_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_USB_USE_USB1
     if (&USBD1 == usbp) {
 

@@ -47,7 +47,7 @@ CANDriver CAND1;
 #endif
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -85,7 +85,7 @@ void can_lld_init(void) {
 void can_lld_start(CANDriver *canp) {
 
   if (canp->state == CAN_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_CAN_USE_CAN1
     if (&CAND1 == canp) {
 

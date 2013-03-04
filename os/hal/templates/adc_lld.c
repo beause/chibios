@@ -47,7 +47,7 @@ ADCDriver ADCD1;
 #endif
 
 /*===========================================================================*/
-/* Driver local variables.                                                   */
+/* Driver local variables and types.                                         */
 /*===========================================================================*/
 
 /*===========================================================================*/
@@ -85,7 +85,7 @@ void adc_lld_init(void) {
 void adc_lld_start(ADCDriver *adcp) {
 
   if (adcp->state == ADC_STOP) {
-    /* Enables the pehipheral.*/
+    /* Enables the peripheral.*/
 #if PLATFORM_ADC_USE_ADC1
     if (&ADCD1 == adcp) {
 
