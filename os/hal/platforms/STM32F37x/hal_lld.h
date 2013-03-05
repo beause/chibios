@@ -274,21 +274,22 @@
 /* ADC attributes.*/
 #define STM32_HAS_ADC1          TRUE
 #define STM32_ADC1_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(1, 1))
-#define STM32_ADC1_DMA_CHN      0x00000000
+#define STM32_ADC1_DMA_CHN      0x00000001
 
-#define STM32_HAS_ADC2          TRUE
-#define STM32_ADC2_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(2, 1) |            \
-                                 STM32_DMA_STREAM_ID_MSK(2, 3))
-#define STM32_ADC2_DMA_CHN      0x00000000
+#define STM32_HAS_ADC2          FALSE
+#define STM32_HAS_ADC3          FALSE
 
-#define STM32_HAS_ADC3          TRUE
-#define STM32_ADC3_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(2, 5))
-#define STM32_ADC3_DMA_CHN      0x00000000
+#define STM32_HAS_SDADC1        TRUE
+#define STM32_SDADC1_DMA_MSK    (STM32_DMA_STREAM_ID_MSK(2, 3))
+#define STM32_SDADC1_DMA_CHN    0x00000003
 
-#define STM32_HAS_ADC4          TRUE
-#define STM32_ADC4_DMA_MSK      (STM32_DMA_STREAM_ID_MSK(2, 2) |            \
-                                 STM32_DMA_STREAM_ID_MSK(2, 4))
-#define STM32_ADC4_DMA_CHN      0x00000000
+#define STM32_HAS_SDADC2        TRUE
+#define STM32_SDADC2_DMA_MSK    (STM32_DMA_STREAM_ID_MSK(2, 4))
+#define STM32_SDADC2_DMA_CHN    0x00000004
+
+#define STM32_HAS_SDADC3        TRUE
+#define STM32_SDADC3_DMA_MSK    (STM32_DMA_STREAM_ID_MSK(2, 5))
+#define STM32_SDADC3_DMA_CHN    0x00000005
 
 /* CAN attributes.*/
 #define STM32_HAS_CAN1          TRUE

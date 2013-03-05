@@ -119,11 +119,44 @@
 #define STM32_ADC_USE_ADC                   FALSE
 #endif
 
+#if !defined(STM32_ADC_USE_SDADC1) || defined(__DOXYGEN__)
+#define STM32_ADC_USE_SDADC1                FALSE
+#endif
+
+#if !defined(STM32_ADC_USE_SDADC2) || defined(__DOXYGEN__)
+#define STM32_ADC_USE_SDADC2                FALSE
+#endif
+
+#if !defined(STM32_ADC_USE_SDADC3) || defined(__DOXYGEN__)
+#define STM32_ADC_USE_SDADC3                FALSE
+#endif
+
 /**
  * @brief   DMA stream used for ADC1 operations.
  */
 #if !defined(STM32_ADC_ADC1_DMA_STREAM) || defined(__DOXYGEN__)
 #define STM32_ADC_ADC1_DMA_STREAM           STM32_DMA_STREAM_ID(1, 1)
+#endif
+
+/**
+ * @brief   DMA stream used for SDADC1 operations.
+ */
+#if !defined(STM32_ADC_SDADC1_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC1_DMA_STREAM           STM32_DMA_STREAM_ID(2, 3)
+#endif
+
+/**
+ * @brief   DMA stream used for SDADC2 operations.
+ */
+#if !defined(STM32_ADC_SDADC2_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC2_DMA_STREAM           STM32_DMA_STREAM_ID(2, 4)
+#endif
+
+/**
+ * @brief   DMA stream used for SDADC3 operations.
+ */
+#if !defined(STM32_ADC_SDADC3_DMA_STREAM) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC3_DMA_STREAM           STM32_DMA_STREAM_ID(2, 5)
 #endif
 
 /**
@@ -133,21 +166,54 @@
 #define STM32_ADC_ADC1_DMA_PRIORITY         2
 #endif
 
+/**
+ * @brief   SDADC1 DMA priority (0..3|lowest..highest).
+ */
+#if !defined(STM32_ADC_SDADC1_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC1_DMA_PRIORITY         3
+#endif
+
+/**
+ * @brief   SDADC2 DMA priority (0..3|lowest..highest).
+ */
+#if !defined(STM32_ADC_SDADC2_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC2_DMA_PRIORITY         3
+#endif
+
+/**
+ * @brief   SDADC3 DMA priority (0..3|lowest..highest).
+ */
+#if !defined(STM32_ADC_SDADC3_DMA_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC3_DMA_PRIORITY         3
+#endif
+
 
 /**
  * @brief   ADC interrupt priority level setting.
- * @note    This setting is shared among ADC1, ADC2 and ADC3 because
- *          all ADCs share the same vector.
  */
 #if !defined(STM32_ADC_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_ADC_IRQ_PRIORITY              5
 #endif
 
 /**
- * @brief   ADC1 DMA interrupt priority level setting.
+ * @brief   SDADC1 interrupt priority level setting.
  */
-#if !defined(STM32_ADC_ADC1_DMA_IRQ_PRIORITY) || defined(__DOXYGEN__)
-#define STM32_ADC_ADC1_DMA_IRQ_PRIORITY     5
+#if !defined(STM32_ADC_SDADC1_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC1_IRQ_PRIORITY              5
+#endif
+
+/**
+ * @brief   SDADC2 interrupt priority level setting.
+ */
+#if !defined(STM32_ADC_SDADC2_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC2_IRQ_PRIORITY              5
+#endif
+
+/**
+ * @brief   SDADC3 interrupt priority level setting.
+ */
+#if !defined(STM32_ADC_SDADC3_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_ADC_SDADC3_IRQ_PRIORITY              5
 #endif
 
 
@@ -169,6 +235,18 @@
 #error "ADC3 not present in the selected device"
 #endif
 
+#if STM32_ADC_USE_SDADC1 && !STM32_HAS_SDADC1
+#error "SDADC1 not present in the selected device"
+#endif
+
+#if STM32_ADC_USE_SDADC2 && !STM32_HAS_SDADC2
+#error "SDADC2 not present in the selected device"
+#endif
+
+#if STM32_ADC_USE_SDADC3 && !STM32_HAS_SDADC3
+#error "SDADC3 not present in the selected device"
+#endif
+
 #if !STM32_ADC_USE_ADC1 && !STM32_ADC_USE_ADC2 && !STM32_ADC_USE_ADC3
 #error "ADC driver activated but no ADC peripheral assigned"
 #endif
@@ -187,6 +265,22 @@
     !STM32_DMA_IS_VALID_ID(STM32_ADC_ADC3_DMA_STREAM, STM32_ADC3_DMA_MSK)
 #error "invalid DMA stream associated to ADC3"
 #endif
+
+#if STM32_ADC_USE_SDADC1 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_ADC_SDADC1_DMA_STREAM, STM32_SDADC1_DMA_MSK)
+#error "invalid DMA stream associated to SDADC1"
+#endif
+
+#if STM32_ADC_USE_SDADC2 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_ADC_SDADC2_DMA_STREAM, STM32_SDADC2_DMA_MSK)
+#error "invalid DMA stream associated to SDADC2"
+#endif
+
+#if STM32_ADC_USE_SDADC3 &&                                                   \
+    !STM32_DMA_IS_VALID_ID(STM32_ADC_SDADC3_DMA_STREAM, STM32_SDADC3_DMA_MSK)
+#error "invalid DMA stream associated to SDADC3"
+#endif
+
 
 
 #if !defined(STM32_DMA_REQUIRED)
@@ -309,6 +403,71 @@ typedef struct {
   uint32_t                  sqr3;
 } ADCConversionGroup;
 
+typedef struct {
+  /**
+   * @brief   Enables the circular buffer mode for the group.
+   */
+  bool_t                    circular;
+  /**
+   * @brief   Number of the analog channels belonging to the conversion group.
+   */
+  adc_channels_num_t        num_channels;
+  /**
+   * @brief   Callback function associated to the group or @p NULL.
+   */
+  adccallback_t             end_cb;
+  /**
+   * @brief   Error callback or @p NULL.
+   */
+  adcerrorcallback_t        error_cb;
+  /* End of the mandatory fields.*/
+  /**
+   * @brief   SDADC CR1 register initialization data.
+   * @note    All the required bits must be defined into this field
+   */
+  uint32_t                  cr1;
+  /**
+   * @brief   SDADC CR2 register initialization data.
+   * @note    All the required bits must be defined into this field except
+   *          @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are
+   *          enforced inside the driver.
+   */
+  uint32_t                  cr2;
+  /**
+   * @brief   SDADC JCHGR register initialization data.
+   * @details Bitfield indicating whether channel i is part of the injected group.
+   *          0 <= i <= 8.  Highest channel, (8), is converted first
+   */
+  uint32_t                  jchgr;
+  /**
+   * @brief   SDADC CONF0R register initialization data.
+   * @details In this field are the parameters for configuration 0
+   */
+  uint32_t                  conf0r;
+  /**
+   * @brief   SDADC CONF1R register initialization data.
+   * @details In this field are the parameters for configuration 1
+   */
+  uint32_t                  conf1r;
+  /**
+   * @brief   SDADC CONF2R register initialization data.
+   * @details In this field are the parameters for configuration 2
+   */
+  uint32_t                  conf2r;
+  /**
+   * @brief   SDADC CONFCH1R register initialization data.
+   * @details In this field channels 0-7 are assigned to a configuration.
+   */
+  uint32_t                  confch1r;
+  /**
+   * @brief   SDADC CONFCH2R register initialization data.
+   * @details In this field channel 8 is assigned to a configuration.
+   * @details In this field are the parameters for configuration 2
+   */
+  uint32_t                  confch2r;
+
+} SDADCConversionGroup;
+
 /**
  * @brief   Driver configuration structure.
  * @note    It could be empty on some architectures.
@@ -340,7 +499,13 @@ struct ADCDriver {
   /**
    * @brief Current conversion group pointer or @p NULL.
    */
-  const ADCConversionGroup  *grpp;
+  const ADCConversionGroup    *grpp;
+
+  /**
+   * @brief Current sigma-delta conversion group pointer or @p NULL.
+   */
+  const SDADCConversionGroup  *sdgrpp;
+
 #if ADC_USE_WAIT || defined(__DOXYGEN__)
   /**
    * @brief Waiting thread.
@@ -365,6 +530,12 @@ struct ADCDriver {
    * @brief Pointer to the ADCx registers block.
    */
   ADC_TypeDef               *adc;
+
+  /**
+   * @brief Pointer to the SDADCx registers block.
+   */
+  SDADC_TypeDef             *sdadc;
+
   /**
    * @brief Pointer to associated DMA channel.
    */
