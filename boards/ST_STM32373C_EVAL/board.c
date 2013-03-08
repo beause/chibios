@@ -105,10 +105,4 @@ bool_t mmc_lld_is_write_protected(MMCDriver *mmcp) {
  * @todo    Add your board-specific code, if any.
  */
 void boardInit(void) {
-  rccEnableGPIOAEN(); /* For Key button input */
-  rccEnableGPIOBEN(); /* For ADC Pot input */
-  rccEnableGPIOCEN(); /* For SPI3 output */
-  rccEnableGPIODEN(); /* for LCD CS */
-  rccEnableSPI3(0);
-  rccEnableUSART2(DUMMY_NOT_USED);
 }

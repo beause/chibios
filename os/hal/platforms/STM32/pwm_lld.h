@@ -327,7 +327,30 @@ typedef struct {
    * @note  The value of this field should normally be equal to zero.
    */                                                                     \
   uint16_t                  bdtr;
+#ifdef 0
+  /**
+   * @brief TIM CR1 register initialization data.
+   * @note  The value of this field should normally be equal to zero.
+   */
+  uint16_t                  cr1;
+  /**
+   * @brief TIM Prescaler register
+   */
+  uint16_t                  prescaler;
+  /**
+   * @brief TIM CCMR1 register initialization data.
+   */
+  uint16_t                  ccmr1; /* capture/compare mode reg 1 */
+  /**
+   * @brief TIM CCMR2 register initialization data.
+   */
+  uint16_t                  ccmr2; /* capture/compare mode reg 2 */
+  /**
+   * @brief TIM CCER register initialization data.
+   */
+  uint16_t                  ccer;  /* capture/compare enable reg */
 #endif
+
 } PWMConfig;
 
 /**

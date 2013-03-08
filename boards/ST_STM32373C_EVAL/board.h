@@ -132,7 +132,7 @@
 #define GPIOE_PRESSUREN             9
 #define GPIOE_PIN10                 10
 #define GPIOE_PIN11                 11
-#define GPIOE_PIN12                 12
+#define GPIOE_ECG                   12
 #define GPIOE_PIN13                 13
 #define GPIOE_PRESSURE_TEPM         14
 #define GPIOE_PIN15                 15
@@ -659,7 +659,7 @@
  * PE9  - PRESSUREN                 (analog).
  * PE10 - PIN10                     (input pullup).
  * PE11 - PIN11                     (input pullup).
- * PE12 - PIN12                     (input pullup).
+ * PE12 - ECG Analog In             (analog).
  * PE13 - PIN13                     (input pullup).
  * PE14 - PRESSURE_TEPM             (input floating).
  * PE15 - PIN15                     (input pullup).
@@ -676,7 +676,7 @@
                                      PIN_MODE_ANALOG(GPIOE_PRESSUREN) |     \
                                      PIN_MODE_INPUT(GPIOE_PIN10) |          \
                                      PIN_MODE_INPUT(GPIOE_PIN11) |          \
-                                     PIN_MODE_INPUT(GPIOE_PIN12) |          \
+                                     PIN_MODE_ANALOG(GPIOE_ECG) |           \
                                      PIN_MODE_INPUT(GPIOE_PIN13) |          \
                                      PIN_MODE_INPUT(GPIOE_PRESSURE_TEPM) |  \
                                      PIN_MODE_INPUT(GPIOE_PIN15))
@@ -692,7 +692,7 @@
                                      PIN_OTYPE_PUSHPULL(GPIOE_PRESSUREN) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOE_PIN10) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOE_PIN11) |      \
-                                     PIN_OTYPE_PUSHPULL(GPIOE_PIN12) |      \
+                                     PIN_OTYPE_PUSHPULL(GPIOE_ECG) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOE_PIN13) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOE_PRESSURE_TEPM) |\
                                      PIN_OTYPE_PUSHPULL(GPIOE_PIN15))
@@ -708,7 +708,7 @@
                                      PIN_OSPEED_100M(GPIOE_PRESSUREN) |     \
                                      PIN_OSPEED_2M(GPIOE_PIN10) |           \
                                      PIN_OSPEED_2M(GPIOE_PIN11) |           \
-                                     PIN_OSPEED_2M(GPIOE_PIN12) |           \
+                                     PIN_OSPEED_2M(GPIOE_ECG) |           \
                                      PIN_OSPEED_2M(GPIOE_PIN13) |           \
                                      PIN_OSPEED_2M(GPIOE_PRESSURE_TEPM) |   \
                                      PIN_OSPEED_2M(GPIOE_PIN15))
@@ -724,7 +724,7 @@
                                      PIN_PUPDR_FLOATING(GPIOE_PRESSUREN) |  \
                                      PIN_PUPDR_PULLUP(GPIOE_PIN10) |        \
                                      PIN_PUPDR_PULLUP(GPIOE_PIN11) |        \
-                                     PIN_PUPDR_PULLUP(GPIOE_PIN12) |        \
+                                     PIN_PUPDR_FLOATING(GPIOE_ECG) |        \
                                      PIN_PUPDR_PULLUP(GPIOE_PIN13) |        \
                                      PIN_PUPDR_FLOATING(GPIOE_PRESSURE_TEPM) |\
                                      PIN_PUPDR_PULLUP(GPIOE_PIN15))
@@ -740,7 +740,7 @@
                                      PIN_ODR_HIGH(GPIOE_PRESSUREN) |        \
                                      PIN_ODR_HIGH(GPIOE_PIN10) |            \
                                      PIN_ODR_HIGH(GPIOE_PIN11) |            \
-                                     PIN_ODR_HIGH(GPIOE_PIN12) |            \
+                                     PIN_ODR_HIGH(GPIOE_ECG) |              \
                                      PIN_ODR_LOW(GPIOE_PIN13) |             \
                                      PIN_ODR_LOW(GPIOE_PRESSURE_TEPM) |     \
                                      PIN_ODR_LOW(GPIOE_PIN15))
@@ -756,7 +756,7 @@
                                      PIN_AFIO_AF(GPIOE_PRESSUREN, 0) |      \
                                      PIN_AFIO_AF(GPIOE_PIN10, 0) |          \
                                      PIN_AFIO_AF(GPIOE_PIN11, 0) |          \
-                                     PIN_AFIO_AF(GPIOE_PIN12, 0) |          \
+                                     PIN_AFIO_AF(GPIOE_ECG, 0) |            \
                                      PIN_AFIO_AF(GPIOE_PIN13, 0) |          \
                                      PIN_AFIO_AF(GPIOE_PRESSURE_TEPM, 0) |  \
                                      PIN_AFIO_AF(GPIOE_PIN15, 0))

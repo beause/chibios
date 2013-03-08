@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16
+  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16 -DCH_DBG_ENABLE_TRACE -DCH_DBG_ENABLE_ASSERTS -DCH_DBG_ENABLE_STACK_CHECK -DCH_DBG_ENABLE_CHECKS -DCH_DBG_SYSTEM_STATE_CHECK
 endif
 
 # C specific options here (added to USE_OPT).
@@ -83,6 +83,7 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
+       tempsense.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global

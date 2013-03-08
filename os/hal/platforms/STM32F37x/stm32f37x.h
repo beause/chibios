@@ -4541,6 +4541,24 @@ typedef struct
 #define  SDADC_CONF0R_COMMON0_0                  ((uint32_t)0x40000000)       /*!< Common mode for configuration 0 Bit 0 */
 #define  SDADC_CONF0R_COMMON0_1                  ((uint32_t)0x80000000)       /*!< Common mode for configuration 0 Bit 1 */
 
+#define SDADC_CONFxR_COMMON_VSSA    0
+#define SDADC_CONFxR_COMMON_VDDA_2  SDADC_CONF0R_COMMON0_0
+#define SDADC_CONFxR_COMMON_VDDA    SDADC_CONF0R_COMMON0_1
+
+#define SDADC_CONFxR_GAIN_X1        ((uint32_t)0x00000000)
+#define SDADC_CONFxR_GAIN_X2        ((uint32_t)0x00100000)
+#define SDADC_CONFxR_GAIN_X4        ((uint32_t)0x00200000)
+#define SDADC_CONFxR_GAIN_X8        ((uint32_t)0x00300000)
+#define SDADC_CONFxR_GAIN_X16       ((uint32_t)0x00400000)
+#define SDADC_CONFxR_GAIN_X32       ((uint32_t)0x00500000)
+#define SDADC_CONFxR_GAIN_DIV2      ((uint32_t)0x00700000)
+
+#define SDADC_CONFxR_SE0_DIFFERENTIAL        0
+#define SDADC_CONFxR_SE0_SINGLE_ENDED_OFFSET SDADC_CONF0R_SE0_0
+#define SDADC_CONFxR_SE0_SINGLE_ENDED_0V_REF SDADC_CONF0R_SE0_0 | SDADC_CONF0R_SE0_1
+
+#define SDADC_CAL_TIMEOUT 4*30720  /* ~5.12 ms at 6 MHz  in a single calibration sequence */
+
 /******************  Bit definition for SDADC_CONF1R register  ****************/
 #define  SDADC_CONF1R_OFFSET1                    ((uint32_t)0x00000FFF)       /*!< 12-bit calibration offset for configuration 1 */
 #define  SDADC_CONF1R_GAIN1                      ((uint32_t)0x00700000)       /*!< Gain setting for configuration 1 */
@@ -4552,7 +4570,11 @@ typedef struct
 #define  SDADC_CONF1R_SE1_1                      ((uint32_t)0x08000000)       /*!< Single ended mode for configuration 1 Bit 1 */
 #define  SDADC_CONF1R_COMMON1                    ((uint32_t)0xC0000000)       /*!< Common mode for configuration 1 */
 #define  SDADC_CONF1R_COMMON1_0                  ((uint32_t)0x40000000)       /*!< Common mode for configuration 1 Bit 0 */
-#define  SDADC_CONF1R_COMMON1_1                  ((uint32_t)0x40000000)       /*!< Common mode for configuration 1 Bit 1 */
+#define  SDADC_CONF1R_COMMON1_1                  ((uint32_t)0x80000000)       /*!< Common mode for configuration 1 Bit 1 */
+
+#define SDADC_CONF0R_COMMON_VSSA    0
+#define SDADC_CONF0R_COMMON_VDDA_2  SDADC_CONF0R_COMMON0_0
+#define SDADC_CONF0R_COMMON_VDDA    SDADC_CONF0R_COMMON0_1
 
 /******************  Bit definition for SDADC_CONF2R register  ****************/
 #define  SDADC_CONF2R_OFFSET2                    ((uint32_t)0x00000FFF)       /*!< 12-bit calibration offset for configuration 2 */
@@ -4606,6 +4628,18 @@ typedef struct
 /*****************  Bit definition for SDADC_RDATA13R register  ***************/
 #define  SDADC_RDATA13R_RDATA3                      ((uint32_t)0xFFFF0000)      /*!< Regular conversion data for SDADC3 */
 #define  SDADC_RDATA13R_RDATA1                      ((uint32_t)0x0000FFFF)      /*!< Regular conversion data for SDADC1 */
+
+typedef enum { SDADC_VREF_EXT = 0x0,
+	       SDADC_VREF_INT_1_2 = SDADC_CR1_REFV_0,
+	       SDADC_VREF_INT_1_8 = SDADC_CR1_REFV_1,
+	       SDADC_VREF_INT_VDDSD = SDADC_CR1_REFV_1 | SDADC_CR1_REFV_0 
+} SDADC_VREF_SEL;
+
+typedef enum { SDADC_NUM_CALIB_SEQ_1 = 0x0,
+	       SDADC_NUM_CALIB_SEQ_2 = SDADC_CR2_CALIBCNT_0,
+	       SDADC_NUM_CALIB_SEQ_3 = SDADC_CR2_CALIBCNT_1
+} SDADC_NUM_CALIB_SEQ;
+
 
 /******************************************************************************/
 /*                                                                            */

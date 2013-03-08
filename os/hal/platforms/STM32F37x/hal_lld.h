@@ -141,7 +141,6 @@
  * @brief   Minimum SDADC clock frequency.
  */
 #define STM32_SDADCCLK_MIN      500000
-/** @} */
 
 /**
  * @name    Internal clock sources
@@ -200,6 +199,23 @@
 #define STM32_ADCPRE_DIV4       (1 << 14)   /**< PPRE2 divided by 4.        */
 #define STM32_ADCPRE_DIV6       (2 << 14)   /**< PPRE2 divided by 6.        */
 #define STM32_ADCPRE_DIV8       (3 << 14)   /**< PPRE2 divided by 8.        */
+
+#define STM32_SDADCPRE_DIV2     (16 << 27)  /**< SYSCLK divided by 2.       */
+#define STM32_SDADCPRE_DIV4     (17 << 27)  /**< SYSCLK divided by 4.       */
+#define STM32_SDADCPRE_DIV6     (18 << 27)  /**< SYSCLK divided by 6.       */
+#define STM32_SDADCPRE_DIV8     (19 << 27)  /**< SYSCLK divided by 8.       */
+#define STM32_SDADCPRE_DIV10    (20 << 27)  /**< SYSCLK divided by 10.      */
+#define STM32_SDADCPRE_DIV12    (21 << 27)  /**< SYSCLK divided by 12.      */
+#define STM32_SDADCPRE_DIV14    (22 << 27)  /**< SYSCLK divided by 14.      */
+#define STM32_SDADCPRE_DIV16    (23 << 27)  /**< SYSCLK divided by 16.      */
+#define STM32_SDADCPRE_DIV20    (24 << 27)  /**< SYSCLK divided by 20.      */
+#define STM32_SDADCPRE_DIV24    (25 << 27)  /**< SYSCLK divided by 24.      */
+#define STM32_SDADCPRE_DIV28    (26 << 27)  /**< SYSCLK divided by 28.      */
+#define STM32_SDADCPRE_DIV32    (27 << 27)  /**< SYSCLK divided by 32.      */
+#define STM32_SDADCPRE_DIV36    (28 << 27)  /**< SYSCLK divided by 36.      */
+#define STM32_SDADCPRE_DIV40    (29 << 27)  /**< SYSCLK divided by 40.      */
+#define STM32_SDADCPRE_DIV44    (30 << 27)  /**< SYSCLK divided by 44.      */
+#define STM32_SDADCPRE_DIV48    (31 << 27)  /**< SYSCLK divided by 48.      */
 
 #define STM32_PLLSRC_HSI        (0 << 16)   /**< PLL clock source is HSI/2. */
 #define STM32_PLLSRC_HSE        (1 << 16)   /**< PLL clock source is
@@ -950,6 +966,57 @@
 /* ADC minimum frequency check.*/
 #if STM32_ADCLK < STM32_ADCCLK_MIN
 #error "STM32_ADCLK below minimum frequency (STM32_ADCCLK_MIN)"
+#endif
+
+/** @} */
+
+/**
+ * @brief   SDADC frequency.
+ */
+#if (STM32_SDADCPRE == STM32_SDADCPRE_DIV2) || defined(__DOXYGEN__)
+#define STM32_SDADCLK               (STM32_SYSCLK / 2)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV4
+#define STM32_SDADCLK               (STM32_SYSCLK / 4)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV6
+#define STM32_SDADCLK               (STM32_SYSCLK / 6)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV8
+#define STM32_SDADCLK               (STM32_SYSCLK / 8)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV10
+#define STM32_SDADCLK               (STM32_SYSCLK / 10)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV12
+#define STM32_SDADCLK               (STM32_SYSCLK / 12)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV14
+#define STM32_SDADCLK               (STM32_SYSCLK / 14)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV16
+#define STM32_SDADCLK               (STM32_SYSCLK / 16)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV20
+#define STM32_SDADCLK               (STM32_SYSCLK / 20)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV24
+#define STM32_SDADCLK               (STM32_SYSCLK / 24)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV28
+#define STM32_SDADCLK               (STM32_SYSCLK / 28)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV32
+#define STM32_SDADCLK               (STM32_SYSCLK / 32)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV36
+#define STM32_SDADCLK               (STM32_SYSCLK / 36)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV40
+#define STM32_SDADCLK               (STM32_SYSCLK / 40)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV44
+#define STM32_SDADCLK               (STM32_SYSCLK / 44)
+#elif STM32_SDADCPRE == STM32_SDADCPRE_DIV48
+#define STM32_SDADCLK               (STM32_SYSCLK / 48)
+#else
+#error "invalid STM32_ADCPRE value specified"
+#endif
+
+/* SdADC maximum frequency check.*/
+#if STM32_SDADCLK > STM32_SDADCCLK_FAST_MAX
+#error "STM32_SDADCLK exceeding maximum frequency (STM32_SDADCCLK_FAST_MAX)"
+#endif
+
+/* SDADC minimum frequency check.*/
+#if STM32_SDADCLK < STM32_SDADCCLK_MIN
+#error "STM32_SDADCLK below minimum frequency (STM32_SDADCCLK_MIN)"
 #endif
 
 /**

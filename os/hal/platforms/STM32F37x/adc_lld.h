@@ -91,6 +91,43 @@
 #define ADC_SAMPLE_239P5        7   /**< @brief 239.5 cycles sampling time. */
 /** @} */
 
+/**
+ * @name SDADC Channels
+ * The SDADC channels are defined as follow:
+ *  - in 16-bit LSB the channel mask is set
+ *  - in 16-bit MSB the channel number is set 
+ *  e.g. for channel 5 definition:  
+ *       - the channel mask is 0x00000020 (bit 5 is set) 
+ *       - the channel number 5 is 0x00050000 
+ *       --> Consequently, channel 5 definition is 0x00000020 | 0x00050000 = 0x00050020
+ * @{*/
+
+#define SDADC_Channel_0 ((uint32_t)0x00000001)
+#define SDADC_Channel_1 ((uint32_t)0x00010002)
+#define SDADC_Channel_2 ((uint32_t)0x00020004)
+#define SDADC_Channel_3 ((uint32_t)0x00030008)
+#define SDADC_Channel_4 ((uint32_t)0x00040010)
+#define SDADC_Channel_5 ((uint32_t)0x00050020)
+#define SDADC_Channel_6 ((uint32_t)0x00060040)
+#define SDADC_Channel_7 ((uint32_t)0x00070080)
+#define SDADC_Channel_8 ((uint32_t)0x00080100)
+
+/* Just one channel of the 9 channels can be selected for regular conversion */
+#define IS_SDADC_REGULAR_CHANNEL(CHANNEL) (((CHANNEL) == SDADC_Channel_0)  || \
+                                           ((CHANNEL) == SDADC_Channel_1)  || \
+                                           ((CHANNEL) == SDADC_Channel_2)  || \
+                                           ((CHANNEL) == SDADC_Channel_3)  || \
+                                           ((CHANNEL) == SDADC_Channel_4)  || \
+                                           ((CHANNEL) == SDADC_Channel_5)  || \
+                                           ((CHANNEL) == SDADC_Channel_6)  || \
+                                           ((CHANNEL) == SDADC_Channel_7)  || \
+                                           ((CHANNEL) == SDADC_Channel_8))
+
+/* Any or all of the 9 channels can be selected for injected conversion */
+#define IS_SDADC_INJECTED_CHANNEL(CHANNEL) (((CHANNEL) != 0) && ((CHANNEL) <= 0x000F01FF))
+
+/** @} */
+
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -361,112 +398,105 @@ typedef struct {
    */
   adcerrorcallback_t        error_cb;
   /* End of the mandatory fields.*/
+
   /**
-   * @brief   ADC CR1 register initialization data.
-   * @note    All the required bits must be defined into this field except
-   *          @p ADC_CR1_SCAN that is enforced inside the driver.
+   * @brief  Union of ADC and SDADC config parms.  The decision of which struct 
+   *         union to use is determined by the ADCDriver.  If the ADCDriver adc parm
+   *         is not NULL, then use the adc struct, otherwise if the ADCDriver sdadc parm
+   *         is not NULL, then use the sdadc struct.
    */
-  uint32_t                  cr1;
-  /**
-   * @brief   ADC CR2 register initialization data.
-   * @note    All the required bits must be defined into this field except
-   *          @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are
-   *          enforced inside the driver.
-   */
-  uint32_t                  cr2;
-  /**
-   * @brief   ADC SMPR1 register initialization data.
-   * @details In this field must be specified the sample times for channels
-   *          10...18.
-   */
-  uint32_t                  smpr1;
-  /**
-   * @brief   ADC SMPR2 register initialization data.
-   * @details In this field must be specified the sample times for channels
-   *          0...9.
-   */
-  uint32_t                  smpr2;
-  /**
-   * @brief   ADC SQR1 register initialization data.
-   * @details Conversion group sequence 13...16 + sequence length.
-   */
-  uint32_t                  sqr1;
-  /**
-   * @brief   ADC SQR2 register initialization data.
-   * @details Conversion group sequence 7...12.
-   */
-  uint32_t                  sqr2;
-  /**
-   * @brief   ADC SQR3 register initialization data.
-   * @details Conversion group sequence 1...6.
-   */
-  uint32_t                  sqr3;
+  union { 
+    struct {
+      /**
+       * @brief   ADC CR1 register initialization data.
+       * @note    All the required bits must be defined into this field except
+       *          @p ADC_CR1_SCAN that is enforced inside the driver.
+       */
+      uint32_t                  cr1;
+      /**
+       * @brief   ADC CR2 register initialization data.
+       * @note    All the required bits must be defined into this field except
+       *          @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are
+       *          enforced inside the driver.
+       */
+      uint32_t                  cr2;
+      /**
+       * @brief   ADC SMPR1 register initialization data.
+       * @details In this field must be specified the sample times for channels
+       *          10...18.
+       */
+      uint32_t                  smpr1;
+      /**
+       * @brief   ADC SMPR2 register initialization data.
+       * @details In this field must be specified the sample times for channels
+       *          0...9.
+       */
+      uint32_t                  smpr2;
+      /**
+       * @brief   ADC SQR1 register initialization data.
+       * @details Conversion group sequence 13...16 + sequence length.
+       */
+      uint32_t                  sqr1;
+      /**
+       * @brief   ADC SQR2 register initialization data.
+       * @details Conversion group sequence 7...12.
+       */
+      uint32_t                  sqr2;
+      /**
+       * @brief   ADC SQR3 register initialization data.
+       * @details Conversion group sequence 1...6.
+       */
+      uint32_t                  sqr3;
+    } adc;
+    struct {
+      /**
+       * @brief   SDADC CR1 register initialization data.
+       * @note    All the required bits must be defined into this field
+       */
+      uint32_t                  cr1;
+      /**
+       * @brief   SDADC CR2 register initialization data.
+       * @note    All the required bits must be defined into this field except
+       *          @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are
+       *          enforced inside the driver.
+       */
+      uint32_t                  cr2;
+      /**
+       * @brief   SDADC JCHGR register initialization data.
+       * @details Bitfield indicating whether channel i is part of the injected group.
+       *          0 <= i <= 8.  Highest channel, (8), is converted first
+       */
+      uint32_t                  jchgr;
+      /**
+       * @brief   SDADC CONF0R register initialization data.
+       * @details In this field are the parameters for configuration 0
+       */
+      uint32_t                  conf0r;
+      /**
+       * @brief   SDADC CONF1R register initialization data.
+       * @details In this field are the parameters for configuration 1
+       */
+      uint32_t                  conf1r;
+      /**
+       * @brief   SDADC CONF2R register initialization data.
+       * @details In this field are the parameters for configuration 2
+       */
+      uint32_t                  conf2r;
+      /**
+       * @brief   SDADC CONFCH1R register initialization data.
+       * @details In this field channels 0-7 are assigned to a configuration.
+       */
+      uint32_t                  confchr1;
+      /**
+       * @brief   SDADC CONFCH2R register initialization data.
+       * @details In this field channel 8 is assigned to a configuration.
+       * @details In this field are the parameters for configuration 2
+       */
+      uint32_t                  confchr2;
+
+    } sdadc;
+  } ll; /* union */
 } ADCConversionGroup;
-
-typedef struct {
-  /**
-   * @brief   Enables the circular buffer mode for the group.
-   */
-  bool_t                    circular;
-  /**
-   * @brief   Number of the analog channels belonging to the conversion group.
-   */
-  adc_channels_num_t        num_channels;
-  /**
-   * @brief   Callback function associated to the group or @p NULL.
-   */
-  adccallback_t             end_cb;
-  /**
-   * @brief   Error callback or @p NULL.
-   */
-  adcerrorcallback_t        error_cb;
-  /* End of the mandatory fields.*/
-  /**
-   * @brief   SDADC CR1 register initialization data.
-   * @note    All the required bits must be defined into this field
-   */
-  uint32_t                  cr1;
-  /**
-   * @brief   SDADC CR2 register initialization data.
-   * @note    All the required bits must be defined into this field except
-   *          @p ADC_CR2_DMA, @p ADC_CR2_CONT and @p ADC_CR2_ADON that are
-   *          enforced inside the driver.
-   */
-  uint32_t                  cr2;
-  /**
-   * @brief   SDADC JCHGR register initialization data.
-   * @details Bitfield indicating whether channel i is part of the injected group.
-   *          0 <= i <= 8.  Highest channel, (8), is converted first
-   */
-  uint32_t                  jchgr;
-  /**
-   * @brief   SDADC CONF0R register initialization data.
-   * @details In this field are the parameters for configuration 0
-   */
-  uint32_t                  conf0r;
-  /**
-   * @brief   SDADC CONF1R register initialization data.
-   * @details In this field are the parameters for configuration 1
-   */
-  uint32_t                  conf1r;
-  /**
-   * @brief   SDADC CONF2R register initialization data.
-   * @details In this field are the parameters for configuration 2
-   */
-  uint32_t                  conf2r;
-  /**
-   * @brief   SDADC CONFCH1R register initialization data.
-   * @details In this field channels 0-7 are assigned to a configuration.
-   */
-  uint32_t                  confch1r;
-  /**
-   * @brief   SDADC CONFCH2R register initialization data.
-   * @details In this field channel 8 is assigned to a configuration.
-   * @details In this field are the parameters for configuration 2
-   */
-  uint32_t                  confch2r;
-
-} SDADCConversionGroup;
 
 /**
  * @brief   Driver configuration structure.
@@ -500,11 +530,6 @@ struct ADCDriver {
    * @brief Current conversion group pointer or @p NULL.
    */
   const ADCConversionGroup    *grpp;
-
-  /**
-   * @brief Current sigma-delta conversion group pointer or @p NULL.
-   */
-  const SDADCConversionGroup  *sdgrpp;
 
 #if ADC_USE_WAIT || defined(__DOXYGEN__)
   /**
@@ -607,6 +632,18 @@ struct ADCDriver {
 #define ADC_SMPR1_SMP_VBAT(n)   ((n) << 24) /**< @brief VBAT sampling time. */
 /** @} */
 
+/**
+ * @name    Channel config settings helper macros
+ * @{
+ */
+#define  sdadcSTM32Channel1TO7Config(SDADC_Channel, SDADC_Conf) ((uint32_t) (SDADC_Conf << (( SDADC_Channel >> 16) << 2)))
+#define  sdadcSTM32Channel8Config(SDADC_Channel, SDADC_Conf) ((uint32_t) SDADC_CONF)
+
+#define  sdadcSTM32ChannelSelect(SDADC_Channel) ((uint32_t) (SDADC_Channel & 0xffff0000))
+
+/** @} */
+
+
 /*===========================================================================*/
 /* External declarations.                                                    */
 /*===========================================================================*/
@@ -623,6 +660,18 @@ extern ADCDriver ADCD2;
 extern ADCDriver ADCD3;
 #endif
 
+#if STM32_ADC_USE_SDADC1 && !defined(__DOXYGEN__)
+extern ADCDriver SDADCD1;
+#endif
+
+#if STM32_ADC_USE_SDADC2 && !defined(__DOXYGEN__)
+extern ADCDriver SDADCD2;
+#endif
+
+#if STM32_ADC_USE_SDADC3 && !defined(__DOXYGEN__)
+extern ADCDriver SDADCD3;
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -635,6 +684,10 @@ extern "C" {
   void adcSTM32DisableTSVREFE(void);
   void adcSTM32EnableVBATE(void);
   void adcSTM32DisableVBATE(void);
+  void sdadcSTM32SetInitializationMode(ADCDriver* adcdp, bool_t enterInitMode);
+  void sdadcSTM32VREFSelect(SDADC_VREF_SEL svs);
+  void sdadcSTM32Calibrate(ADCDriver* adcdp, SDADC_NUM_CALIB_SEQ numCalibSequences,
+			 ADCConversionGroup* grpp);
 #ifdef __cplusplus
 }
 #endif
