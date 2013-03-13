@@ -42,9 +42,9 @@
 #define GPIOA_LS_PWM                2  /* MODIFIED */
 #define GPIOA_RTD                   3  /* MODIFIED */
 #define GPIOA_AIR_CS                4  /* MODIFIED */
-#define GPIOA_SPI2_CLK              5  /* MODIFIED */
-#define GPIOA_SPI2_MISO             6  /* MODIFIED */
-#define GPIOA_SPI2_MOSI             7  /* MODIFIED */
+#define GPIOA_SPI1_CLK              5  /* MODIFIED */
+#define GPIOA_SPI1_MISO             6  /* MODIFIED */
+#define GPIOA_SPI1_MOSI             7  /* MODIFIED */
 #define GPIOA_PIN8                  8
 #define GPIOA_RS485_TX              9  /* MODIFIED */
 #define GPIOA_RS485_RX              10 /* MODIFIED */
@@ -52,13 +52,13 @@
 #define GPIOA_RS485_RTS             12 /* MODIFIED */
 #define GPIOA_SWDIO                 13 /* MODIFIED */
 #define GPIOA_SWCLK                 14 /* MODIFIED */
-#define GPIOA_TDI                   15 /* MODIFIED */
+#define GPIOA_JTDI                  15 /* MODIFIED */
 
 #define GPIOB_AIR_TEMP              0  /* MODIFIED */
 #define GPIOB_HALL_B                1  /* MODIFIED */
 #define GPIOB_HALL_A                2  /* MODIFIED */
 #define GPIOB_SWO                   3
-#define GPIOB_JTRST                 4
+#define GPIOB_PIN4                  4
 #define GPIOB_XCVR_INT              5  /* MODIFIED */
 #define GPIOB_AIR_HEATER            6  /* MODIFIED */
 #define GPIOB_XCVR_CS               7  /* MODIFIED */
@@ -197,35 +197,35 @@
                                      PIN_MODE_ALTERNATE(GPIOA_SWDIO) |      \
                                      PIN_MODE_ALTERNATE(GPIOA_SWCLK) |      \
                                      PIN_MODE_ALTERNATE(GPIOA_JTDI))
-#define VAL_GPIOA_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOA_XCVR_RST)WKUP_BUTTON) |\
-                                     PIN_OTYPE_PUSHPULL(GPIOA_RTD_SEL) LDR_OUT) |    \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_LS_PWM) |KEY_BUTTON) | \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_RTD) |   PIN3) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_AIR_CS) |PIN4) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_SPI1_CLK)PIN5) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_SPI1_MISOPIN6) |       \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_SPI1_MOSICOMP2_OUT) |  \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_PIN8) |  I2C2_SMB) |   \
-                                     PIN_OTYPE_OPENDRAIN(GPIOARS485_TX)_I2C2_SCL) |  \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_RS485_RX)I2C2_SDA) |   \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_RS485_CTSUSB_DM) |     \
-                                     PIN_OTYPE_PUSHPULL(GPIOA_RS485_RTSUSB_DP) |     \
+#define VAL_GPIOA_OTYPER            (PIN_OTYPE_PUSHPULL(GPIOA_XCVR_RST) |\
+                                     PIN_OTYPE_PUSHPULL(GPIOA_RTD_SEL) |    \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_LS_PWM) | \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_RTD) |       \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_AIR_CS) |       \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_SPI1_CLK) |       \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_SPI1_MISO) |       \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_SPI1_MOSI) |  \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_PIN8) |   \
+                                     PIN_OTYPE_OPENDRAIN(GPIOA_RS485_TX) |  \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_RS485_RX) |   \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_RS485_CTS) |     \
+                                     PIN_OTYPE_PUSHPULL(GPIOA_RS485_RTS) |     \
                                      PIN_OTYPE_PUSHPULL(GPIOA_SWDIO) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOA_SWCLK) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOA_JTDI))
-#define VAL_GPIOA_OSPEEDR           (PIN_OSPEED_2M(  GPIOA_XCVR_RST)WKUP_BUTTON) |     \
-                                     PIN_OSPEED_2M(  GPIOA_RTD_SEL) LDR_OUT) |         \
-                                     PIN_OSPEED_2M(  GPIOA_LS_PWM) |KEY_BUTTON) |      \
-                                     PIN_OSPEED_2M(  GPIOA_RTD) |   PIN3) |            \
-                                     PIN_OSPEED_2M(  GPIOA_AIR_CS) |PIN4) |            \
-                                     PIN_OSPEED_100M(GPIOA_SPI1_CLK)PIN5) |          \
-                                     PIN_OSPEED_2M(  GPIOA_SPI1_MISOPIN6) |            \
-                                     PIN_OSPEED_100M(GPIOA_SPI1_MOSICOMP2_OUT) |     \
-                                     PIN_OSPEED_2M(  GPIOA_PIN8) |  I2C2_SMB) |        \
-                                     PIN_OSPEED_100M(GPIOA_RS485_TX)I2C2_SCL) |      \
-                                     PIN_OSPEED_100M(GPIOA_RS485_RX)I2C2_SDA) |      \
-                                     PIN_OSPEED_100M(GPIOA_RS485_CTSUSB_DM) |        \
-                                     PIN_OSPEED_2M(  GPIOA_RS485_RTSUSB_DP) |          \
+#define VAL_GPIOA_OSPEEDR           (PIN_OSPEED_2M(  GPIOA_XCVR_RST) |     \
+                                     PIN_OSPEED_2M(  GPIOA_RTD_SEL) |         \
+                                     PIN_OSPEED_2M(  GPIOA_LS_PWM) |      \
+                                     PIN_OSPEED_2M(  GPIOA_RTD) |            \
+                                     PIN_OSPEED_2M(  GPIOA_AIR_CS) |            \
+                                     PIN_OSPEED_100M(GPIOA_SPI1_CLK) |          \
+                                     PIN_OSPEED_2M(  GPIOA_SPI1_MISO) |            \
+                                     PIN_OSPEED_100M(GPIOA_SPI1_MOSI) |     \
+                                     PIN_OSPEED_2M(  GPIOA_PIN8) |        \
+                                     PIN_OSPEED_100M(GPIOA_RS485_TX) |      \
+                                     PIN_OSPEED_100M(GPIOA_RS485_RX) |      \
+                                     PIN_OSPEED_100M(GPIOA_RS485_CTS) |        \
+                                     PIN_OSPEED_2M(  GPIOA_RS485_RTS) |          \
                                      PIN_OSPEED_100M(GPIOA_SWDIO) |         \
                                      PIN_OSPEED_100M(GPIOA_SWCLK) |         \
                                      PIN_OSPEED_100M(GPIOA_JTDI))
@@ -265,15 +265,15 @@
                                      PIN_AFIO_AF(GPIOA_RTD_SEL, 0) |        \
                                      PIN_AFIO_AF(GPIOA_LS_PWM, 0) |     \
                                      PIN_AFIO_AF(GPIOA_RTD, 0) |           \
-                                     PIN_AFIO_AF(GPIOA_AIR_CS, 0) |           \
+                                     PIN_AFIO_AF(GPIOA_AIR_CS, 5) |           \
                                      PIN_AFIO_AF(GPIOA_SPI1_CLK, 5) |           \
-                                     PIN_AFIO_AF(GPIOA_SPI1_MISO, 0) |           \
-                                     PIN_AFIO_AF(GPIOA_SPI1_MOSI, 0))
+                                     PIN_AFIO_AF(GPIOA_SPI1_MISO, 5) |           \
+                                     PIN_AFIO_AF(GPIOA_SPI1_MOSI, 5))
 #define VAL_GPIOA_AFRH              (PIN_AFIO_AF(GPIOA_PIN8, 0) |       \
-                                     PIN_AFIO_AF(GPIOA_RS485_TX), 4) |       \
-                                     PIN_AFIO_AF(GPIOA_RS485_RX), 4) |       \
-                                     PIN_AFIO_AF(GPIOA_RS485_CTS, 14) |        \
-                                     PIN_AFIO_AF(GPIOA_RS485_RTS, 14) |        \
+                                     PIN_AFIO_AF(GPIOA_RS485_TX, 0) |       \
+                                     PIN_AFIO_AF(GPIOA_RS485_RX, 0) |       \
+                                     PIN_AFIO_AF(GPIOA_RS485_CTS, 0) |        \
+                                     PIN_AFIO_AF(GPIOA_RS485_RTS, 0) |        \
                                      PIN_AFIO_AF(GPIOA_SWDIO, 0) |          \
                                      PIN_AFIO_AF(GPIOA_SWCLK, 0) |          \
                                      PIN_AFIO_AF(GPIOA_JTDI, 0))
@@ -306,7 +306,7 @@
                                      PIN_MODE_INPUT(    GPIOB_XCVR_INT) |           \
                                      PIN_MODE_OUTPUT(   GPIOB_AIR_HEATER) |   \
                                      PIN_MODE_OUTPUT(   GPIOB_XCVR_CS) |   \
-                                     PIN_MODE_INPUT(    GPIOB_PIN8) |           \
+                                     PIN_MODE_INPUT(    GPIOB_EXTDRV_STAT) |           \
                                      PIN_MODE_INPUT(    GPIOB_PWR_FAULT) |           \
                                      PIN_MODE_INPUT(    GPIOB_PIN10) |          \
                                      PIN_MODE_INPUT(    GPIOB_PIN11) |          \
@@ -322,7 +322,7 @@
                                      PIN_OTYPE_PUSHPULL( GPIOB_XCVR_INT) |       \
                                      PIN_OTYPE_PUSHPULL(GPIOB_AIR_HEATER) |  \
                                      PIN_OTYPE_PUSHPULL(GPIOB_XCVR_CS) |  \
-                                     PIN_OTYPE_PUSHPULL( GPIOB_EXTDRV_STATPIN8) |       \
+                                     PIN_OTYPE_PUSHPULL( GPIOB_EXTDRV_STAT) |       \
                                      PIN_OTYPE_PUSHPULL( GPIOB_PWR_FAULT) |       \
                                      PIN_OTYPE_PUSHPULL( GPIOB_PIN10) |      \
                                      PIN_OTYPE_PUSHPULL( GPIOB_PIN11) |      \
@@ -338,7 +338,7 @@
                                      PIN_OSPEED_2M(GPIOB_XCVR_INT) |            \
                                      PIN_OSPEED_2M(GPIOB_AIR_HEATER) |      \
                                      PIN_OSPEED_2M(GPIOB_XCVR_CS) |      \
-                                     PIN_OSPEED_2M(GPIOB_EXTDRV_STATPIN8) |            \
+                                     PIN_OSPEED_2M(GPIOB_EXTDRV_STAT) |            \
                                      PIN_OSPEED_2M(GPIOB_PWR_FAULT) |            \
                                      PIN_OSPEED_2M(GPIOB_PIN10) |           \
                                      PIN_OSPEED_2M(GPIOB_PIN11) |           \
@@ -354,7 +354,7 @@
                                      PIN_PUPDR_PULLUP(GPIOB_XCVR_INT) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_AIR_HEATER) |   \
                                      PIN_PUPDR_PULLUP(GPIOB_XCVR_CS) |   \
-                                     PIN_PUPDR_PULLUP(GPIOB_PIN8) |         \
+                                     PIN_PUPDR_PULLUP(GPIOB_EXTDRV_STAT) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_PWR_FAULT) |         \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN10) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN11) |        \
@@ -370,7 +370,7 @@
                                      PIN_ODR_HIGH(GPIOB_XCVR_INT) |             \
                                      PIN_ODR_HIGH(GPIOB_AIR_HEATER) |         \
                                      PIN_ODR_HIGH(GPIOB_XCVR_CS) |         \
-                                     PIN_ODR_HIGH(GPIOB_EXTDRV_STATPIN8) |             \
+                                     PIN_ODR_HIGH(GPIOB_EXTDRV_STAT) |             \
                                      PIN_ODR_HIGH(GPIOB_PWR_FAULT) |             \
                                      PIN_ODR_HIGH(GPIOB_PIN10) |            \
                                      PIN_ODR_HIGH(GPIOB_PIN11) |            \
@@ -386,7 +386,7 @@
                                      PIN_AFIO_AF(GPIOB_XCVR_INT, 0) |           \
                                      PIN_AFIO_AF(GPIOB_AIR_HEATER, 0) |       \
                                      PIN_AFIO_AF(GPIOB_XCVR_CS, 0))
-#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_PIN8, 0) |           \
+#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_EXTDRV_STAT, 0) |           \
                                      PIN_AFIO_AF(GPIOB_PWR_FAULT, 0) |           \
                                      PIN_AFIO_AF(GPIOB_PIN10, 0) |          \
                                      PIN_AFIO_AF(GPIOB_PIN11, 0) |          \

@@ -64,7 +64,7 @@ endif
 PROJECT = ch
 
 # Imported source files and paths
-CHIBIOS = ../../..
+CHIBIOS = ../..
 include $(CHIBIOS)/boards/ST_STM32373C_EVAL/board.mk
 include $(CHIBIOS)/os/hal/platforms/STM32F37x/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
@@ -83,7 +83,6 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       tempsense.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
