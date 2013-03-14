@@ -652,6 +652,58 @@
 /** @} */
 
 /**
+ * @brief   Enables the TIM15 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableTIM15(lp) rccEnableAPB2(RCC_APB2ENR_TIM15EN, lp)
+
+/**
+ * @brief   Disables the TIM15 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableTIM15(lp) rccDisableAPB2(RCC_APB2ENR_TIM15EN, lp)
+
+/**
+ * @brief   Resets the TIM15 peripheral.
+ *
+ * @api
+ */
+#define rccResetTIM15() rccResetAPB2(RCC_APB2RSTR_TIM15RST)
+/** @} */
+
+/**
+ * @brief   Enables the TIM19 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccEnableTIM19(lp) rccEnableAPB2(RCC_APB2ENR_TIM19EN, lp)
+
+/**
+ * @brief   Disables the TIM19 peripheral clock.
+ *
+ * @param[in] lp        low power enable flag
+ *
+ * @api
+ */
+#define rccDisableTIM19(lp) rccDisableAPB2(RCC_APB2ENR_TIM19EN, lp)
+
+/**
+ * @brief   Resets the TIM19 peripheral.
+ *
+ * @api
+ */
+#define rccResetTIM19() rccResetAPB2(RCC_APB2RSTR_TIM19RST)
+/** @} */
+
+/**
  * @name    USART/UART peripherals specific RCC operations
  * @{
  */

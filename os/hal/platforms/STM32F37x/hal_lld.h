@@ -384,7 +384,7 @@
 #define STM32_SPI3_TX_DMA_CHN   0x00000000
 
 /* TIM attributes.*/
-#define STM32_HAS_TIM1          TRUE
+#define STM32_HAS_TIM1          FALSE
 #define STM32_HAS_TIM2          TRUE
 #define STM32_HAS_TIM3          TRUE
 #define STM32_HAS_TIM4          TRUE

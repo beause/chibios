@@ -5,7 +5,7 @@
 
 # Compiler options here.
 ifeq ($(USE_OPT),)
-  USE_OPT = -O0 -ggdb -fomit-frame-pointer -falign-functions=16 -DCH_DBG_ENABLE_TRACE -DCH_DBG_ENABLE_ASSERTS -DCH_DBG_ENABLE_STACK_CHECK -DCH_DBG_ENABLE_CHECKS -DCH_DBG_SYSTEM_STATE_CHECK
+  USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 -DCH_DBG_ENABLE_TRACE -DCH_DBG_ENABLE_ASSERTS -DCH_DBG_ENABLE_STACK_CHECK -DCH_DBG_ENABLE_CHECKS -DCH_DBG_SYSTEM_STATE_CHECK
 endif
 
 # C specific options here (added to USE_OPT).
@@ -70,7 +70,7 @@ include $(CHIBIOS)/os/hal/platforms/STM32F37x/platform.mk
 include $(CHIBIOS)/os/hal/hal.mk
 include $(CHIBIOS)/os/ports/GCC/ARMCMx/STM32F3xx/port.mk
 include $(CHIBIOS)/os/kernel/kernel.mk
-include $(CHIBIOS)/test/test.mk
+#include $(CHIBIOS)/test/test.mk
 
 # Define linker script file here
 LDSCRIPT= $(PORTLD)/STM32F373xC.ld
@@ -83,7 +83,8 @@ CSRC = $(PORTSRC) \
        $(HALSRC) \
        $(PLATFORMSRC) \
        $(BOARDSRC) \
-       tempsense.c \
+       $(CHIBIOS)/os/various/evtimer.c \
+       $(CHIBIOS)/os/various/syscalls.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
@@ -115,7 +116,6 @@ ASMSRC = $(PORTASM)
 
 INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
          $(HALINC) $(PLATFORMINC) $(BOARDINC) \
-         $(CHIBIOS)/os/various/devices_lib/accel \
          $(CHIBIOS)/os/various
 
 #
@@ -129,7 +129,7 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
 MCU  = cortex-m4
 
 #TRGT = arm-elf-
-TRGT =/Users/alvin/genist/arm-toolchain/bin/arm-none-eabi-
+TRGT = /Users/alvin/genist/arm-toolchain/bin/arm-none-eabi-
 CC   = $(TRGT)gcc
 CPPC = $(TRGT)g++
 # Enable loading with g++ only if you need C++ runtime support.
