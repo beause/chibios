@@ -184,7 +184,7 @@
 #define VAL_GPIOA_MODER             (PIN_MODE_OUTPUT(   GPIOA_XCVR_RST) |      \
                                      PIN_MODE_OUTPUT(   GPIOA_RTD_SEL) |       \
                                      PIN_MODE_INPUT(    GPIOA_LS_PWM) |         \
-                                     PIN_MODE_INPUT(    GPIOA_RTD) |            \
+                                     PIN_MODE_ANALOG(   GPIOA_RTD) |            \
                                      PIN_MODE_INPUT(    GPIOA_AIR_CS) |         \
                                      PIN_MODE_ALTERNATE(GPIOA_SPI1_CLK) |   \
                                      PIN_MODE_ALTERNATE(GPIOA_SPI1_MISO) |  \

@@ -1,0 +1,32 @@
+/*
+    Copyright (C) 2013 Genist
+*/
+
+#ifndef _MS5803_H_
+#define _MS5803_H_
+
+
+
+#define MS5803_CMD_RESET              0x1e
+#define MS5803_CMD_CONVERTD1_OSR256   0x40
+#define MS5803_CMD_CONVERTD1_OSR512   0x42
+#define MS5803_CMD_CONVERTD1_OSR1024  0x44
+#define MS5803_CMD_CONVERTD1_OSR2048  0x46
+#define MS5803_CMD_CONVERTD1_OSR4096  0x48
+#define MS5803_CMD_CONVERTD2_OSR256   0x50
+#define MS5803_CMD_CONVERTD2_OSR512   0x52
+#define MS5803_CMD_CONVERTD2_OSR1024  0x54
+#define MS5803_CMD_CONVERTD2_OSR2048  0x56
+#define MS5803_CMD_CONVERTD2_OSR4096  0x58
+#define MS5803_CMD_ADC_READ           0x0
+#define MS5803_CMD_PROM_READ(n) (0xa0 | ((n & 7) << 4))
+
+#define MS5803_CMD_RESET_WAIT_MILLISEC   2.8         
+#define MS5803_CMD_CONVERT_WAIT_MILLISEC 8.22
+#define MS5803_NUM_PROM_VALS_START_IDX   1
+#define MS5803_NUM_PROM_VALS             7 /* 7 16 bit values */
+#define MS5803_PROM_NUM_BYTES_PER_VAL    2
+
+extern void testMS5803(void);
+
+#endif /* _MS5803_H_ */
