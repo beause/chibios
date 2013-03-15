@@ -10,13 +10,15 @@ The demo runs on a STM 32373C eval board.
 
 The application demonstrates the use of the STM32 PWM and ICU drivers. 
 The pin PC10 is reconfigured from SPI3_CLK output to be the output of
-TIM15_CH1.  The output of the PWM can be seen on PC10.
+TIM15_CH1.  The output of the PWM can be seen on PC10.  PC10 is found on
+connector CN13.
 
-On the eval board, the CN11 pin 2 is used as the ICU input.  This is 
-configured so that pin PA4 is configured for alternate function 2, TIM3_CH2
+Pin PC7 is reconfigured to be alternate function TIM3_CH2.  PC7 is found on
+connector CN13. 
+
 The ICU unit will measure the generated PWM.
 
-PC10 must be connected to CN11 pin 2.
+PC10 must be connected to PC7.
 
 ** Build Procedure **
 
