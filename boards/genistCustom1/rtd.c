@@ -11,7 +11,7 @@
 adcsample_t avg_rtd;
 BinarySemaphore adcOutputBinSem;
 
-static msg_t printADCOutputThread(void *arg) {
+msg_t printADCOutputThread(void *arg) {
 
   chRegSetThreadName("ADCOutputThread");
 
