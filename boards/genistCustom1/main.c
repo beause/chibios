@@ -7,6 +7,9 @@
 #include "test.h"
 #include "ms5803.h"
 #include "rtd.h"
+
+#define RTD /* activate RTD thread */
+
 /*
  * This is a periodic thread that does absolutely nothing except flashing LEDs.
  */
@@ -20,9 +23,18 @@ static msg_t Thread1(void *arg) {
   (void)arg;
   chRegSetThreadName("blinker");
   while (TRUE) {
-    palSetPad(GPIOC, GPIOC_LED_B);
+    switchLED(GPIOC,GPIOC_LED_B, TRUE);
     chThdSleepMilliseconds(125);
-    palClearPad(GPIOC, GPIOC_LED_B);
+    switchLED(GPIOC,GPIOC_LED_B, FALSE);
+
+    switchLED(GPIOC,GPIOC_LED_G, TRUE);
+    chThdSleepMilliseconds(125);
+    switchLED(GPIOC,GPIOC_LED_G, FALSE);
+
+    switchLED(GPIOC,GPIOC_LED_R, TRUE);
+    chThdSleepMilliseconds(125);
+    switchLED(GPIOC,GPIOC_LED_R, FALSE);
+
   }
   return 0;
 }
@@ -64,10 +76,16 @@ int main(void) {
   halInit();
   chSysInit();
 
+#ifdef BLINKER
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+#endif
+#ifdef MS5803
   chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, ThreadPressureSense, NULL);
-//  chThdCreateStatic(waThread3, sizeof(waThread3), NORMALPRIO, ThreadRTD, NULL);
-  //chThdCreateStatic(waThread4, sizeof(waThread3), NORMALPRIO, printADCOutputThread, NULL);
+#endif
+#ifdef RTD
+  chThdCreateStatic(waThread3, sizeof(waThread3), NORMALPRIO, ThreadRTD, NULL);
+  //  chThdCreateStatic(waThread4, sizeof(waThread3), NORMALPRIO, printADCOutputThread, NULL);
+#endif
 
   /*
    * Normal main() thread activity, in this demo it does nothing except

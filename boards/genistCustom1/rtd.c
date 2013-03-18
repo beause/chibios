@@ -95,7 +95,9 @@ static const ADCConversionGroup adcgrpcfg = {
   ADC_CR2_JSWSTART    Start Conversion of injected channels
   ADC_CR2_SWSTART     Start Conversion of regular channels
   ADC_CR2_TSVREFE     Temperature Sensor and VREFINT Enable */
-  .ll.adc.cr2 = ADC_CR2_TSVREFE,              /* ADC CR2 reg */
+  .ll.adc.cr2 = ADC_CR2_TSVREFE | ADC_CR2_EXTTRIG | 
+  ADC_CR2_EXTSEL_0 | ADC_CR2_EXTSEL_1 | ADC_CR2_EXTSEL_2 | 
+  ADC_CR2_SWSTART,   /* ADC CR2 reg */
 
 /******************  Bit definition for ADC_SMPR1 register  ************
   ADC_SMPR1_SMP10     SMP10[2:0] bits (Channel 10 Sample time selection)
@@ -170,7 +172,7 @@ void adccb(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
     /* Calculates the average values from the ADC samples.*/
     avg_rtd   = (samples[0] + samples[1] + samples[2] + samples[3]) / 4;
     chSysLockFromIsr();
-    chBSemSignal(&adcOutputBinSem);
+    chBSemSignalI(&adcOutputBinSem);
     chSysUnlockFromIsr();
 
   }
@@ -198,10 +200,13 @@ void testRTD()
    */
 
   /* set console output destination */
-  // setStreamDest(&SD2);
+  setStreamDest(&SD2);
 
   while (TRUE) {
     adcStartConversion(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
+    if (chBSemWait(&adcOutputBinSem) != RDY_OK) {
+      chDbgPanic("ERROR - adcOutputBinSem reset");
+    }
     chThdSleepMilliseconds(1000);
   }
 }
