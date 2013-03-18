@@ -85,6 +85,7 @@ CSRC = $(PORTSRC) \
        $(BOARDSRC) \
        ms5803.c \
        rtd.c \
+       led.c \
        main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global

@@ -6,9 +6,14 @@
 #include "hal.h"
 #include "test.h"
 #include "ms5803.h"
+#include "led.h"
 
 uint8_t crc4(uint16_t n_prom[]);
 
+/**
+**  spi2BinSem used to synchronize spi 
+**  finished callback with thread.
+**/
 BinarySemaphore spi2BinSem;
 
 void spi2callback(SPIDriver *spip) {
@@ -65,7 +70,6 @@ void testMS5803()
   uint8_t  sendbuf[1];
   //  uint8_t  rxbuf[3];
   uint16_t promvals[MS5803_NUM_PROM_VALS];
-  uint8_t  led;
 
   chBSemInit(&spi2BinSem, TRUE); /* init to taken */
 
@@ -76,9 +80,9 @@ void testMS5803()
 
   spiSelect(&SPID1);
 
-  palSetPad(GPIOC, GPIOC_LED_R);
-  palSetPad(GPIOC, GPIOC_LED_B);
-  palSetPad(GPIOC, GPIOC_LED_G);
+  switchLED(GPIOC, GPIOC_LED_G, FALSE);
+  switchLED(GPIOC, GPIOC_LED_G, FALSE);
+  switchLED(GPIOC, GPIOC_LED_G, FALSE);
 
   // send reset
   sendbuf[0] = MS5803_CMD_RESET;
@@ -102,15 +106,11 @@ void testMS5803()
 
   // perform CRC 4 to see if we got the right values
   if (crc4(promvals) != (promvals[MS5803_NUM_PROM_VALS] & 0xf)) {
-    led = GPIOC_LED_R;
+    switchLED(GPIOC, GPIOC_LED_R, TRUE);
   }
   else {
-    led = GPIOC_LED_G;
+    switchLED(GPIOC, GPIOC_LED_G, TRUE);
   }
-
-  palClearPad(GPIOC, led);
-  
-
 }
 
 
