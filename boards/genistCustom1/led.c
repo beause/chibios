@@ -7,6 +7,13 @@
 **/
 void switchLED(GPIO_TypeDef* gpiot, uint8_t pin, bool_t onoff)
 {
+
+  if (!(gpiot == GPIOC && (pin == GPIOC_LED_R ||
+			   pin == GPIOC_LED_B ||
+			   pin == GPIOC_LED_G))) {
+    port_halt();
+  }
+
   /* 
      genistCustom board as of March 18, 2013
      LEDs are wired to 5V.  To turn off must
