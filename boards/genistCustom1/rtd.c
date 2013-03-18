@@ -169,7 +169,9 @@ void adccb(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
 
     /* Calculates the average values from the ADC samples.*/
     avg_rtd   = (samples[0] + samples[1] + samples[2] + samples[3]) / 4;
+    chSysLockFromIsr();
     chBSemSignal(&adcOutputBinSem);
+    chSysUnlockFromIsr();
 
   }
 }
@@ -196,12 +198,10 @@ void testRTD()
    */
 
   /* set console output destination */
-  setStreamDest(&SD2);
+  // setStreamDest(&SD2);
 
   while (TRUE) {
-    chSysLockFromIsr();
-    adcStartConversionI(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
-    chSysUnlockFromIsr();
+    adcStartConversion(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
     chThdSleepMilliseconds(1000);
   }
 }

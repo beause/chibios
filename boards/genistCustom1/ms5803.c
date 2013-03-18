@@ -18,7 +18,7 @@ void spi2callback(SPIDriver *spip) {
 }
 
 SPIConfig spi2PressureSensorConfig = {
-  NULL,         /* callback */
+  spi2callback, /* callback */
   GPIOA,        /* chip select line port */
   GPIOA_AIR_CS, /* chihp select line pad number */
   /* CR1
@@ -76,16 +76,20 @@ void testMS5803()
 
   spiSelect(&SPID1);
 
+  palSetPad(GPIOC, GPIOC_LED_R);
+  palSetPad(GPIOC, GPIOC_LED_B);
+  palSetPad(GPIOC, GPIOC_LED_G);
+
   // send reset
   sendbuf[0] = MS5803_CMD_RESET;
   spiStartSend(&SPID1, 1, sendbuf);
-  spiUnselect(&SPID1);
   chThdSleepMilliseconds(MS5803_CMD_RESET_WAIT_MILLISEC);
   
   // read prom
   uint8_t idx;
   for (idx=MS5803_NUM_PROM_VALS_START_IDX;idx <= MS5803_NUM_PROM_VALS; idx++) {
     sendbuf[0] = MS5803_CMD_PROM_READ(idx);
+    spiSelect(&SPID1);
     spiStartSend(&SPID1, 1, sendbuf);
     spiStartReceive(&SPID1, MS5803_PROM_NUM_BYTES_PER_VAL,
 		    &promvals[idx - MS5803_NUM_PROM_VALS_START_IDX]);
@@ -104,7 +108,7 @@ void testMS5803()
     led = GPIOC_LED_G;
   }
 
-  palSetPad(GPIOC, led);
+  palClearPad(GPIOC, led);
   
 
 }

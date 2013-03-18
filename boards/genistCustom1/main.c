@@ -66,8 +66,8 @@ int main(void) {
 
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
   chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, ThreadPressureSense, NULL);
-  chThdCreateStatic(waThread3, sizeof(waThread3), NORMALPRIO, ThreadRTD, NULL);
-  chThdCreateStatic(waThread4, sizeof(waThread3), NORMALPRIO, printADCOutputThread, NULL);
+//  chThdCreateStatic(waThread3, sizeof(waThread3), NORMALPRIO, ThreadRTD, NULL);
+  //chThdCreateStatic(waThread4, sizeof(waThread3), NORMALPRIO, printADCOutputThread, NULL);
 
   /*
    * Normal main() thread activity, in this demo it does nothing except
