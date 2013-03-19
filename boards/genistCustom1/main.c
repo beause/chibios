@@ -39,11 +39,12 @@ static msg_t Thread1(void *arg) {
 }
 
 static msg_t ThreadPressureSense(void *arg) {
+  double pressure, temp;
 
   chRegSetThreadName("ms5803");
-  testMS5803();
 
   while (TRUE) {  
+    ms5803_readPressureAndTemp(&pressure, &temp);
     chThdSleepMilliseconds(1000);
   }
   return 0;

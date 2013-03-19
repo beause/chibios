@@ -131,7 +131,7 @@ INCDIR = $(PORTINC) $(KERNINC) $(TESTINC) \
 MCU  = cortex-m4
 
 #TRGT = arm-elf-
-TRGT =arm-none-eabi-
+TRGT =~/genist/arm-toolchain/bin/arm-none-eabi-
 CC   = $(TRGT)gcc
 CPPC = $(TRGT)g++
 # Enable loading with g++ only if you need C++ runtime support.

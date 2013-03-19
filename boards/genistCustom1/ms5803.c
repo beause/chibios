@@ -8,6 +8,43 @@
 #include "ms5803.h"
 #include "led.h"
 
+/***
+ **
+ **  Redefine the 3 values below to move
+ **  the MS5803 to another SPI port.
+ **
+ **/
+#define MS5803_USE_SPI_DRIVER SPID1
+#define MS5803_CS_ON_GPIO     GPIOA
+#define MS5803_CS_ON_PAD      GPIOA_AIR_CS
+
+
+static const uint8_t zero = 0;
+static bool_t ms5803_initialized = FALSE;
+static uint32_t promvals[MS5803_NUM_PROM_VALS];
+
+/**
+**  spiPressureSensorBinSem used to synchronize spi 
+**  finished callback with thread.
+**/
+static BinarySemaphore spiPressureSensorBinSem;
+
+
+/**
+ *  @brief helper function to initiate a ChibiOS/RT HAL SPI 
+ *          exchange operation, and waits for synchronization
+ *          from callback.
+ *  @param txp - pointer to value to send
+ *  @param rxp - pointer to location for receive
+ *
+ */
+static void mySPIExchange(uint8_t* txp, uint8_t* rxp) {
+  spiStartExchange(&MS5803_USE_SPI_DRIVER, 1, txp, rxp);  /* send prom read command */
+  if (chBSemWait(&spiPressureSensorBinSem) != RDY_OK) {
+    chDbgPanic("ERROR - calibration sem reset");
+  }
+}
+
 
 /**
  *  @brief calculates and returns CRC4
@@ -18,20 +55,13 @@
 uint8_t crc4(uint32_t n_prom[]);
 
 /**
-**  spiPressureSensorBinSem used to synchronize spi 
-**  finished callback with thread.
-**/
-BinarySemaphore spiPressureSensorBinSem;
-
-
-/**
  * @brief called when SPI action complete
  * @param spip pointer to SPI Driver that 
  *        completed.
  */
 void spi_ms5803Callback(SPIDriver *spip) {
     chSysLockFromIsr();
-    chBSemSignalI(&spi2BinSem);
+    chBSemSignalI(&spiPressureSensorBinSem);
     chSysUnlockFromIsr();
 }
 
@@ -42,8 +72,8 @@ SPIConfig spiPressureSensorConfig = {
   // ChibiOS/RT SPI HAL manually controls the 
   // chip select.  The 32F37x can control it by hardware,
   // but isn't used.
-  GPIOA,        /* chip select line port */
-  GPIOA_AIR_CS, /* chihp select line pad number */
+  MS5803_CS_ON_GPIO, /* chip select line port */
+  MS5803_CS_ON_PAD,  /* chihp select line pad number */
 
   /* CR1
      bit#  value description
@@ -85,32 +115,79 @@ SPIConfig spiPressureSensorConfig = {
 };
 
 /**
- *   @brief Takes a measurement from the ms5803 pressure sensor
+ *  @brief helper function to send a conversion command to
+ *          ms5803, then read the result.
+ *  @param cmd - conversion cmd ( selects type of conversion
+ *
+ */
+static uint32_t ms5803_convertAndRead(MS5803_CMDS cmd)
+{
+  uint8_t garbage, msb, midsb, lsb;
+
+  spiSelect(&MS5803_USE_SPI_DRIVER);
+
+  /* send conversion command */
+  spiStartSend(&MS5803_USE_SPI_DRIVER, 1, &cmd);
+  if (chBSemWait(&spiPressureSensorBinSem) != RDY_OK) {
+    chDbgPanic("ERROR - calibration sem reset");
+  }
+
+  /* wait for conversion to finish */
+  chThdSleepMilliseconds(MS5803_CMD_CONVERT_WAIT_MILLISEC);
+
+  spiUnselect(&MS5803_USE_SPI_DRIVER);
+
+  cmd = MS5803_CMD_ADC_READ;
+
+  spiSelect(&MS5803_USE_SPI_DRIVER);
+
+  /* read 24 bits */
+  mySPIExchange(&cmd,  &garbage);  /* send adc read command */
+  mySPIExchange(&zero, &msb);      /* send prom read command */
+  mySPIExchange(&zero, &midsb);  /* send prom read command */
+  mySPIExchange(&zero, &lsb);  /* send prom read command */
+
+  return (((uint32_t) msb) << 16)  | 
+         (((uint32_t) midsb) << 8) |
+         ((uint32_t) lsb);
+}
+
+
+/**
+ *   @brief Takes a measurement from the ms5803 pressure and temp sensor
  *          over the SPI bus. Initializes the ms5803 if necessary. 
  *          Adjusts reading using coefficients.
  */
-float ms5803_readPressure()
+void ms5803_readPressureAndTemp(double* pressure, double* temp)
 {
-  uint8_t  cmd;
-  uint8_t  zero = 0;
-  uint8_t  msb, lsb;
-  uint8_t  garbage;
+  double uncomp_pressure;
+  double uncomp_temp;
+
+  double dT; // difference between actual and measured temperature 
+  double OFF; // offset at actual temperature 
+  double SENS; // sensitivity at actual temperature
 
   if ((ms5803_initialized == FALSE) && 
       (ms5803_resetAndReadCoefficients() == FALSE)) {
      port_halt();
   }
 
-  spiSelect(&SPID1);
-  cmd = MS5803_CMD_PROM_READ(idx);
+  uncomp_pressure = (double) ms5803_convertAndRead(MS5803_CMD_CONVERTD1_OSR4096);
+  uncomp_temp     = (double) ms5803_convertAndRead(MS5803_CMD_CONVERTD2_OSR4096);
 
-    spiStartExchange(&SPID1, 1, &cmd, &garbage);  /* send prom read command */
-    if (chBSemWait(&spiPressureSensorBinSem) != RDY_OK) {
-      chDbgPanic("ERROR - calibration sem reset");
-    }
+  // calcualte 1st order pressure and temperature (MS5607 1st order algorithm) 
+  dT       = uncomp_temp - promvals[MS5803_COEFFS_REF_TEMP] * 256.0;
+
+  OFF      = promvals[MS5803_COEFFS_PRESSURE_OFFSET] * 131072.0 + 
+    dT * promvals[MS5803_COEFFS_TEMP_COEFF_OF_PRESSURE_OFFSET] / 64.0;
+
+  SENS     = promvals[MS5803_COEFFS_PRESSURE_SENSITIVITY] * 65536.0 + 
+    dT * promvals[MS5803_COEFFS_TEMP_COEFF_OF_PRESSURE_SENS] / 128.0; 
+
+  *temp    = (2000+ (dT*promvals[MS5803_COEFFS_TEMP_COEFF_OF_TEMP]) / 8388608.0) / 100.0;
+
+  *pressure= (((uncomp_pressure * SENS) / 2097152.0 - OFF) / 32768.0) / 100.0;
 }
-
-static bool_t ms5803_initialized = FALSE;
 
 /**
  *   @brief Uses SPI to reset ms5803 pressure sensor
@@ -121,53 +198,49 @@ static bool_t ms5803_initialized = FALSE;
 bool_t ms5803_resetAndReadCoefficients()
 {
   uint8_t  cmd;
-  uint8_t  zero = 0;
   uint8_t  msb, lsb;
   uint8_t  garbage;
 
   //  uint8_t  rxbuf[3];
-  uint32_t promvals[MS5803_NUM_PROM_VALS];
-
   chBSemInit(&spiPressureSensorBinSem, TRUE); /* init to taken */
 
   rccEnableGPIOAEN(); /* for SPI1 (pressure sense) */
 
-  spiStart(&SPID1, &spiPressureSensorConfig);
+  /* Enable and configure SPI port */
+  spiStart(&MS5803_USE_SPI_DRIVER, &spiPressureSensorConfig);
 
   // send reset command to ms5803.c
-  spiSelect(&SPID1);
+
   cmd = MS5803_CMD_RESET;
-  spiStartSend(&SPID1, 1, &cmd);
+
+  spiSelect(&MS5803_USE_SPI_DRIVER);
+  spiStartSend(&MS5803_USE_SPI_DRIVER, 1, &cmd);
+
   chThdSleepMilliseconds(MS5803_CMD_RESET_WAIT_MILLISEC);
+
   if (chBSemWait(&spiPressureSensorBinSem) != RDY_OK) {
     chDbgPanic("ERROR - calibration sem reset");
   }
-  spiUnselect(&SPID1);
+  spiUnselect(&MS5803_USE_SPI_DRIVER);
 
   // read ms5803 prom values.  Prom values are 16-bits.
   // prom 0 is factory setting
   // prom 1-6 are coefficients
   // prom 7 bits 0-3 contain the CRC4 checksum
-
   uint8_t idx;
+
   for (idx=MS5803_NUM_PROM_VALS_START_IDX;idx < MS5803_NUM_PROM_VALS; idx++) {
 
-    spiSelect(&SPID1);
     cmd = MS5803_CMD_PROM_READ(idx);
 
-    spiStartExchange(&SPID1, 1, &cmd, &garbage);  /* send prom read command */
-    if (chBSemWait(&spiPressureSensorBinSem) != RDY_OK) {
-      chDbgPanic("ERROR - calibration sem reset");
-    }
-    spiStartExchange(&SPID1, 1, &zero, &msb);    /* send 0x0 to get msb */
-    if (chBSemWait(&spi2BinSem) != RDY_OK) {
-      chDbgPanic("ERROR - calibration sem reset");
-    }
-    spiStartExchange(&SPID1, 1, &zero, &lsb);    /* send 0x0 to get lsb */
-    if (chBSemWait(&spi2BinSem) != RDY_OK) {
-      chDbgPanic("ERROR - calibration sem reset");
-    }
-    spiUnselect(&SPID1);
+    spiSelect(&MS5803_USE_SPI_DRIVER);
+
+    mySPIExchange( &cmd,  &garbage);  /* send prom read command */
+    mySPIExchange( &zero, &msb);      /* send 0x0 to get msb */
+    mySPIExchange( &zero, &lsb);      /* send 0x0 to get lsb */
+
+    spiUnselect(&MS5803_USE_SPI_DRIVER);
+
     promvals[idx - MS5803_NUM_PROM_VALS_START_IDX] =  (uint32_t)
      (((uint16_t) msb) << 8 | (uint16_t) lsb);
 
