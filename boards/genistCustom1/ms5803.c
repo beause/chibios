@@ -8,24 +8,43 @@
 #include "ms5803.h"
 #include "led.h"
 
+
+/**
+ *  @brief calculates and returns CRC4
+ *  @param n_prom 32 bit array of values
+ *
+ *  Copied from http://www.meas-spec.com/downloads/C-Code_Example_for_MS56xx,_MS57xx_(except_analog_sensor)_and_MS58xx_Series_Pressure_Sensors.pdf
+ */
 uint8_t crc4(uint32_t n_prom[]);
 
 /**
-**  spi2BinSem used to synchronize spi 
+**  spiPressureSensorBinSem used to synchronize spi 
 **  finished callback with thread.
 **/
-BinarySemaphore spi2BinSem;
+BinarySemaphore spiPressureSensorBinSem;
 
-void spi2callback(SPIDriver *spip) {
+
+/**
+ * @brief called when SPI action complete
+ * @param spip pointer to SPI Driver that 
+ *        completed.
+ */
+void spi_ms5803Callback(SPIDriver *spip) {
     chSysLockFromIsr();
     chBSemSignalI(&spi2BinSem);
     chSysUnlockFromIsr();
 }
 
-SPIConfig spi2PressureSensorConfig = {
-  spi2callback, /* callback */
+
+SPIConfig spiPressureSensorConfig = {
+  spi_ms5803Callback, /* callback */
+
+  // ChibiOS/RT SPI HAL manually controls the 
+  // chip select.  The 32F37x can control it by hardware,
+  // but isn't used.
   GPIOA,        /* chip select line port */
   GPIOA_AIR_CS, /* chihp select line pad number */
+
   /* CR1
      bit#  value description
      15    0     BIDIMODE - 2 line unidir data mode
@@ -65,7 +84,41 @@ SPIConfig spi2PressureSensorConfig = {
   0x770c
 };
 
-void testMS5803()
+/**
+ *   @brief Takes a measurement from the ms5803 pressure sensor
+ *          over the SPI bus. Initializes the ms5803 if necessary. 
+ *          Adjusts reading using coefficients.
+ */
+float ms5803_readPressure()
+{
+  uint8_t  cmd;
+  uint8_t  zero = 0;
+  uint8_t  msb, lsb;
+  uint8_t  garbage;
+
+  if ((ms5803_initialized == FALSE) && 
+      (ms5803_resetAndReadCoefficients() == FALSE)) {
+     port_halt();
+  }
+
+  spiSelect(&SPID1);
+  cmd = MS5803_CMD_PROM_READ(idx);
+
+    spiStartExchange(&SPID1, 1, &cmd, &garbage);  /* send prom read command */
+    if (chBSemWait(&spiPressureSensorBinSem) != RDY_OK) {
+      chDbgPanic("ERROR - calibration sem reset");
+    }
+}
+
+static bool_t ms5803_initialized = FALSE;
+
+/**
+ *   @brief Uses SPI to reset ms5803 pressure sensor
+ *          device.  Then reads factory coefficients.
+ *          If CRC4 fails over factory prom, then
+ *          halts.  Otherwise returns TRUE.
+ */
+bool_t ms5803_resetAndReadCoefficients()
 {
   uint8_t  cmd;
   uint8_t  zero = 0;
@@ -75,28 +128,27 @@ void testMS5803()
   //  uint8_t  rxbuf[3];
   uint32_t promvals[MS5803_NUM_PROM_VALS];
 
-  chBSemInit(&spi2BinSem, TRUE); /* init to taken */
+  chBSemInit(&spiPressureSensorBinSem, TRUE); /* init to taken */
 
   rccEnableGPIOAEN(); /* for SPI1 (pressure sense) */
-  rccEnableGPIOCEN(); /* for LEDs / SPI3 (zigbee) */
 
-  spiStart(&SPID1, &spi2PressureSensorConfig);
+  spiStart(&SPID1, &spiPressureSensorConfig);
 
-  switchLED(GPIOC, GPIOC_LED_G, FALSE);
-  switchLED(GPIOC, GPIOC_LED_R, FALSE);
-  switchLED(GPIOC, GPIOC_LED_B, FALSE);
-
-  // send reset to ms5803.c
+  // send reset command to ms5803.c
   spiSelect(&SPID1);
   cmd = MS5803_CMD_RESET;
   spiStartSend(&SPID1, 1, &cmd);
   chThdSleepMilliseconds(MS5803_CMD_RESET_WAIT_MILLISEC);
-  if (chBSemWait(&spi2BinSem) != RDY_OK) {
+  if (chBSemWait(&spiPressureSensorBinSem) != RDY_OK) {
     chDbgPanic("ERROR - calibration sem reset");
   }
   spiUnselect(&SPID1);
 
-  // read prom
+  // read ms5803 prom values.  Prom values are 16-bits.
+  // prom 0 is factory setting
+  // prom 1-6 are coefficients
+  // prom 7 bits 0-3 contain the CRC4 checksum
+
   uint8_t idx;
   for (idx=MS5803_NUM_PROM_VALS_START_IDX;idx < MS5803_NUM_PROM_VALS; idx++) {
 
@@ -104,7 +156,7 @@ void testMS5803()
     cmd = MS5803_CMD_PROM_READ(idx);
 
     spiStartExchange(&SPID1, 1, &cmd, &garbage);  /* send prom read command */
-    if (chBSemWait(&spi2BinSem) != RDY_OK) {
+    if (chBSemWait(&spiPressureSensorBinSem) != RDY_OK) {
       chDbgPanic("ERROR - calibration sem reset");
     }
     spiStartExchange(&SPID1, 1, &zero, &msb);    /* send 0x0 to get msb */
@@ -121,14 +173,14 @@ void testMS5803()
 
   }
 
-
   // perform CRC 4 to see if we got the right values
   if (crc4(promvals) != (promvals[MS5803_NUM_PROM_VALS - 1] & 0xf)) {
-    switchLED(GPIOC, GPIOC_LED_R, TRUE);
+    port_halt();
   }
-  else {
-    switchLED(GPIOC, GPIOC_LED_G, TRUE);
-  }
+
+  ms5803_initialized = TRUE;
+
+  return TRUE;
 }
 
 

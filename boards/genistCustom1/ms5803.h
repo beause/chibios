@@ -25,7 +25,9 @@
 #define MS5803_CMD_CONVERT_WAIT_MILLISEC 10 /* actually 8.22ms */
 #define MS5803_NUM_PROM_VALS_START_IDX   0
 #define MS5803_NUM_PROM_VALS             8 /* 8 16 bit values */
+#define MS5803_NUM_COEFF                 6
 
-extern void testMS5803(void);
+extern bool_t ms5803_resetAndReadCoefficients();
+extern float ms5803_readPressure();
 
 #endif /* _MS5803_H_ */
