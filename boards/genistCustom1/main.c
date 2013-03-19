@@ -8,8 +8,7 @@
 #include "ms5803.h"
 #include "rtd.h"
 
-#define RTD /* activate RTD thread */
-
+#define MS5803
 /*
  * This is a periodic thread that does absolutely nothing except flashing LEDs.
  */

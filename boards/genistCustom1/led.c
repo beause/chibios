@@ -21,6 +21,7 @@ void switchLED(GPIO_TypeDef* gpiot, uint8_t pin, bool_t onoff)
    */
 
   if (onoff == FALSE)   {
+#if 0
     /* 
        turn LED off 
        
@@ -28,6 +29,13 @@ void switchLED(GPIO_TypeDef* gpiot, uint8_t pin, bool_t onoff)
      */
     gpiot->MODER &= ~( 1 << (2*pin));
     gpiot->PUPDR &= ~( 1 << (2*pin));
+#else
+    gpiot->MODER  &= ~( 1 << (2*pin));  /* clear mode */
+    gpiot->MODER  |=  ( 1 << (2*pin));  /* set to output */
+    gpiot->OTYPER &= ~( 1 << pin);      /* set to push pull */
+    gpiot->PUPDR  &= ~( 1 << (2*pin));  /* set to floating */
+    gpiot->ODR    |= ( 1 << pin);      /* set output to 0 */
+#endif
   }
   else {
     /* 

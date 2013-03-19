@@ -8,7 +8,7 @@
 #include "ms5803.h"
 #include "led.h"
 
-uint8_t crc4(uint16_t n_prom[]);
+uint8_t crc4(uint32_t n_prom[]);
 
 /**
 **  spi2BinSem used to synchronize spi 
@@ -34,8 +34,8 @@ SPIConfig spi2PressureSensorConfig = {
      12    0     CRCNEXT - N/A
      11    0     CRCL - N/A
      10    0     Full duplex
-      9    0     S/W slave mgmt - disabled
-      8    0     Internal slave select N/A
+      9    0     SSM S/W slave mgmt - disabled
+      8    0     SSI Internal slave select N/A
       7    0     LSBFIRST - MSB first
       6    1     SPE - SPI enabled
       5-3  0     BAUD RATE  PCLK / 2  (MS5803 max 20MHz)  
@@ -67,45 +67,63 @@ SPIConfig spi2PressureSensorConfig = {
 
 void testMS5803()
 {
-  uint8_t  sendbuf[1];
+  uint8_t  cmd;
+  uint8_t  zero = 0;
+  uint8_t  msb, lsb;
+  uint8_t  garbage;
+
   //  uint8_t  rxbuf[3];
-  uint16_t promvals[MS5803_NUM_PROM_VALS];
+  uint32_t promvals[MS5803_NUM_PROM_VALS];
 
   chBSemInit(&spi2BinSem, TRUE); /* init to taken */
 
-  rccEnableGPIOAEN(); /* for SPI2 (pressure sense) */
+  rccEnableGPIOAEN(); /* for SPI1 (pressure sense) */
   rccEnableGPIOCEN(); /* for LEDs / SPI3 (zigbee) */
 
   spiStart(&SPID1, &spi2PressureSensorConfig);
 
+  switchLED(GPIOC, GPIOC_LED_G, FALSE);
+  switchLED(GPIOC, GPIOC_LED_R, FALSE);
+  switchLED(GPIOC, GPIOC_LED_B, FALSE);
+
+  // send reset to ms5803.c
   spiSelect(&SPID1);
-
-  switchLED(GPIOC, GPIOC_LED_G, FALSE);
-  switchLED(GPIOC, GPIOC_LED_G, FALSE);
-  switchLED(GPIOC, GPIOC_LED_G, FALSE);
-
-  // send reset
-  sendbuf[0] = MS5803_CMD_RESET;
-  spiStartSend(&SPID1, 1, sendbuf);
+  cmd = MS5803_CMD_RESET;
+  spiStartSend(&SPID1, 1, &cmd);
   chThdSleepMilliseconds(MS5803_CMD_RESET_WAIT_MILLISEC);
-  
+  if (chBSemWait(&spi2BinSem) != RDY_OK) {
+    chDbgPanic("ERROR - calibration sem reset");
+  }
+  spiUnselect(&SPID1);
+
   // read prom
   uint8_t idx;
-  for (idx=MS5803_NUM_PROM_VALS_START_IDX;idx <= MS5803_NUM_PROM_VALS; idx++) {
-    sendbuf[0] = MS5803_CMD_PROM_READ(idx);
-    spiSelect(&SPID1);
-    spiStartSend(&SPID1, 1, sendbuf);
-    spiStartReceive(&SPID1, MS5803_PROM_NUM_BYTES_PER_VAL,
-		    &promvals[idx - MS5803_NUM_PROM_VALS_START_IDX]);
-    spiUnselect(&SPID1);
+  for (idx=MS5803_NUM_PROM_VALS_START_IDX;idx < MS5803_NUM_PROM_VALS; idx++) {
 
+    spiSelect(&SPID1);
+    cmd = MS5803_CMD_PROM_READ(idx);
+
+    spiStartExchange(&SPID1, 1, &cmd, &garbage);  /* send prom read command */
     if (chBSemWait(&spi2BinSem) != RDY_OK) {
       chDbgPanic("ERROR - calibration sem reset");
     }
+    spiStartExchange(&SPID1, 1, &zero, &msb);    /* send 0x0 to get msb */
+    if (chBSemWait(&spi2BinSem) != RDY_OK) {
+      chDbgPanic("ERROR - calibration sem reset");
+    }
+    spiStartExchange(&SPID1, 1, &zero, &lsb);    /* send 0x0 to get lsb */
+    if (chBSemWait(&spi2BinSem) != RDY_OK) {
+      chDbgPanic("ERROR - calibration sem reset");
+    }
+    spiUnselect(&SPID1);
+    promvals[idx - MS5803_NUM_PROM_VALS_START_IDX] =  (uint32_t)
+     (((uint16_t) msb) << 8 | (uint16_t) lsb);
+
   }
 
+
   // perform CRC 4 to see if we got the right values
-  if (crc4(promvals) != (promvals[MS5803_NUM_PROM_VALS] & 0xf)) {
+  if (crc4(promvals) != (promvals[MS5803_NUM_PROM_VALS - 1] & 0xf)) {
     switchLED(GPIOC, GPIOC_LED_R, TRUE);
   }
   else {
@@ -119,7 +137,7 @@ void testMS5803()
  **  manufacturer of the MS5803 pressure sensor.
  **
  **/
-uint8_t crc4(uint16_t n_prom[])
+uint8_t crc4(uint32_t n_prom[])
 {
   int cnt; // simple counter 
   unsigned int n_rem; // crc reminder 

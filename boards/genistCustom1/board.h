@@ -185,7 +185,7 @@
                                      PIN_MODE_OUTPUT(   GPIOA_RTD_SEL) |       \
                                      PIN_MODE_INPUT(    GPIOA_LS_PWM) |         \
                                      PIN_MODE_ANALOG(   GPIOA_RTD) |            \
-                                     PIN_MODE_INPUT(    GPIOA_AIR_CS) |         \
+                                     PIN_MODE_OUTPUT   (GPIOA_AIR_CS) |         \
                                      PIN_MODE_ALTERNATE(GPIOA_SPI1_CLK) |   \
                                      PIN_MODE_ALTERNATE(GPIOA_SPI1_MISO) |  \
                                      PIN_MODE_ALTERNATE(GPIOA_SPI1_MOSI) |  \
@@ -217,7 +217,7 @@
                                      PIN_OSPEED_2M(  GPIOA_RTD_SEL) |         \
                                      PIN_OSPEED_2M(  GPIOA_LS_PWM) |      \
                                      PIN_OSPEED_2M(  GPIOA_RTD) |            \
-                                     PIN_OSPEED_2M(  GPIOA_AIR_CS) |            \
+                                     PIN_OSPEED_100M(GPIOA_AIR_CS) |            \
                                      PIN_OSPEED_100M(GPIOA_SPI1_CLK) |          \
                                      PIN_OSPEED_2M(  GPIOA_SPI1_MISO) |            \
                                      PIN_OSPEED_100M(GPIOA_SPI1_MOSI) |     \
@@ -233,7 +233,7 @@
                                      PIN_PUPDR_FLOATING(GPIOA_RTD_SEL) |    \
                                      PIN_PUPDR_FLOATING(GPIOA_LS_PWM) | \
                                      PIN_PUPDR_PULLUP(  GPIOA_RTD) |         \
-                                     PIN_PUPDR_PULLUP(  GPIOA_AIR_CS) |         \
+                                     PIN_PUPDR_FLOATING(  GPIOA_AIR_CS) |         \
                                      PIN_PUPDR_FLOATING(GPIOA_SPI1_CLK) |       \
                                      PIN_PUPDR_PULLUP(  GPIOA_SPI1_MISO) |         \
                                      PIN_PUPDR_FLOATING(GPIOA_SPI1_MOSI) |  \
@@ -265,7 +265,7 @@
                                      PIN_AFIO_AF(GPIOA_RTD_SEL, 0) |        \
                                      PIN_AFIO_AF(GPIOA_LS_PWM, 0) |     \
                                      PIN_AFIO_AF(GPIOA_RTD, 0) |           \
-                                     PIN_AFIO_AF(GPIOA_AIR_CS, 5) |           \
+                                     PIN_AFIO_AF(GPIOA_AIR_CS, 0) |           \
                                      PIN_AFIO_AF(GPIOA_SPI1_CLK, 5) |           \
                                      PIN_AFIO_AF(GPIOA_SPI1_MISO, 5) |           \
                                      PIN_AFIO_AF(GPIOA_SPI1_MOSI, 5))

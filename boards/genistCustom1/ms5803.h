@@ -19,13 +19,12 @@
 #define MS5803_CMD_CONVERTD2_OSR2048  0x56
 #define MS5803_CMD_CONVERTD2_OSR4096  0x58
 #define MS5803_CMD_ADC_READ           0x0
-#define MS5803_CMD_PROM_READ(n) (0xa0 | ((n & 7) << 4))
+#define MS5803_CMD_PROM_READ(n) (0xa0 | ((n & 7) << 1))
 
-#define MS5803_CMD_RESET_WAIT_MILLISEC   2.8         
-#define MS5803_CMD_CONVERT_WAIT_MILLISEC 8.22
-#define MS5803_NUM_PROM_VALS_START_IDX   1
-#define MS5803_NUM_PROM_VALS             7 /* 7 16 bit values */
-#define MS5803_PROM_NUM_BYTES_PER_VAL    2
+#define MS5803_CMD_RESET_WAIT_MILLISEC   3 /* actually 2.8ms */
+#define MS5803_CMD_CONVERT_WAIT_MILLISEC 10 /* actually 8.22ms */
+#define MS5803_NUM_PROM_VALS_START_IDX   0
+#define MS5803_NUM_PROM_VALS             8 /* 8 16 bit values */
 
 extern void testMS5803(void);
 
