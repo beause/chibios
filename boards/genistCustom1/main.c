@@ -7,13 +7,14 @@
 #include "test.h"
 #include "ms5803.h"
 #include "rtd.h"
+#include "led.h"
 
 #define MS5803
 /*
  * This is a periodic thread that does absolutely nothing except flashing LEDs.
  */
 static WORKING_AREA(waThread1, 128);
-static WORKING_AREA(waThread2, 128);
+static WORKING_AREA(waThreadPressureSensor, 256);
 static WORKING_AREA(waThread3, 128);
 static WORKING_AREA(waThread4, 128);
 
@@ -39,7 +40,7 @@ static msg_t Thread1(void *arg) {
 }
 
 static msg_t ThreadPressureSense(void *arg) {
-  double pressure, temp;
+  int64_t pressure, temp;
 
   chRegSetThreadName("ms5803");
 
@@ -80,7 +81,10 @@ int main(void) {
   chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 #endif
 #ifdef MS5803
-  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, ThreadPressureSense, NULL);
+  chThdCreateStatic(waThreadPressureSensor, 
+                    sizeof(waThreadPressureSensor),
+                    NORMALPRIO, 
+                    ThreadPressureSense, NULL);
 #endif
 #ifdef RTD
   chThdCreateStatic(waThread3, sizeof(waThread3), NORMALPRIO, ThreadRTD, NULL);

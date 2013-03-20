@@ -39,7 +39,7 @@ typedef enum {
 #define MS5803_NUM_PROM_VALS             8  /* 8 16 bit values */
 #define MS5803_NUM_COEFF                 6
 
-extern bool_t   ms5803_resetAndReadCoefficients();
-extern uint32_t ms5803_readTempAndPressure();
+extern bool_t   ms5803_resetAndReadCoefficients(void);
+extern uint32_t ms5803_readTempAndPressure(void);
 
 #endif /* _MS5803_H_ */

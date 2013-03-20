@@ -38,7 +38,7 @@ static BinarySemaphore spiPressureSensorBinSem;
  *  @param rxp - pointer to location for receive
  *
  */
-static void mySPIExchange(uint8_t* txp, uint8_t* rxp) {
+static void mySPIExchange(const uint8_t* txp, uint8_t* rxp) {
   spiStartExchange(&MS5803_USE_SPI_DRIVER, 1, txp, rxp);  /* send prom read command */
   if (chBSemWait(&spiPressureSensorBinSem) != RDY_OK) {
     chDbgPanic("ERROR - calibration sem reset");
@@ -147,6 +147,8 @@ static uint32_t ms5803_convertAndRead(MS5803_CMDS cmd)
   mySPIExchange(&zero, &midsb);  /* send prom read command */
   mySPIExchange(&zero, &lsb);  /* send prom read command */
 
+  spiUnselect(&MS5803_USE_SPI_DRIVER);
+
   return (((uint32_t) msb) << 16)  | 
          (((uint32_t) midsb) << 8) |
          ((uint32_t) lsb);
@@ -158,35 +160,40 @@ static uint32_t ms5803_convertAndRead(MS5803_CMDS cmd)
  *          over the SPI bus. Initializes the ms5803 if necessary. 
  *          Adjusts reading using coefficients.
  */
-void ms5803_readPressureAndTemp(double* pressure, double* temp)
+void ms5803_readPressureAndTemp(int64_t* pressure, int64_t* temp)
 {
-  double uncomp_pressure;
-  double uncomp_temp;
+  uint32_t uncomp_pressure;
+  uint32_t uncomp_temp;
 
-  double dT; // difference between actual and measured temperature 
-  double OFF; // offset at actual temperature 
-  double SENS; // sensitivity at actual temperature
+  int32_t dT; // difference between actual and measured temperature 
+  int64_t OFF; // offset at actual temperature 
+  int64_t SENS; // sensitivity at actual temperature
 
   if ((ms5803_initialized == FALSE) && 
       (ms5803_resetAndReadCoefficients() == FALSE)) {
      port_halt();
   }
 
-  uncomp_pressure = (double) ms5803_convertAndRead(MS5803_CMD_CONVERTD1_OSR4096);
-  uncomp_temp     = (double) ms5803_convertAndRead(MS5803_CMD_CONVERTD2_OSR4096);
+  uncomp_pressure = ms5803_convertAndRead(MS5803_CMD_CONVERTD1_OSR4096);
+  uncomp_temp     = ms5803_convertAndRead(MS5803_CMD_CONVERTD2_OSR4096);
 
-  // calcualte 1st order pressure and temperature (MS5607 1st order algorithm) 
-  dT       = uncomp_temp - promvals[MS5803_COEFFS_REF_TEMP] * 256.0;
 
-  OFF      = promvals[MS5803_COEFFS_PRESSURE_OFFSET] * 131072.0 + 
-    dT * promvals[MS5803_COEFFS_TEMP_COEFF_OF_PRESSURE_OFFSET] / 64.0;
+  int64_t c1 = promvals[MS5803_COEFFS_PRESSURE_SENSITIVITY];
+  int64_t c2 = promvals[MS5803_COEFFS_PRESSURE_OFFSET];
+  int64_t c3 = promvals[MS5803_COEFFS_TEMP_COEFF_OF_PRESSURE_SENS];
+  int64_t c4 = promvals[MS5803_COEFFS_TEMP_COEFF_OF_PRESSURE_OFFSET];
+  int64_t c5 = promvals[MS5803_COEFFS_REF_TEMP];
+  int64_t c6 = promvals[MS5803_COEFFS_TEMP_COEFF_OF_TEMP];
 
-  SENS     = promvals[MS5803_COEFFS_PRESSURE_SENSITIVITY] * 65536.0 + 
-    dT * promvals[MS5803_COEFFS_TEMP_COEFF_OF_PRESSURE_SENS] / 128.0; 
+  // calculate 1st order pressure and temperature (MS5607 1st order algorithm) 
+  dT       = uncomp_temp - c5 * 256; 
+  OFF      = (c2 << 16) + (dT * c4) / (1 << 7);
+  SENS     = (c1 << 15) + (c3 * dT) / (1 << 8); 
 
-  *temp    = (2000+ (dT*promvals[MS5803_COEFFS_TEMP_COEFF_OF_TEMP]) / 8388608.0) / 100.0;
+  *temp    = 2000 + (dT * c6) / (1 << 23);
 
-  *pressure= (((uncomp_pressure * SENS) / 2097152.0 - OFF) / 32768.0) / 100.0;
+  *pressure= ((((int64_t) uncomp_pressure) * SENS) / (1 << 21) - OFF) / 
+                 (1 << 15);
 }
 
 /**
