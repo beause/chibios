@@ -121,7 +121,7 @@ static const ADCConversionGroup adcgrpcfg = {
   ADC_SMPR2_SMP7      SMP7[2:0] bits (Channel 7 Sample time selection)
   ADC_SMPR2_SMP8      SMP8[2:0] bits (Channel 8 Sample time selection)
   ADC_SMPR2_SMP9      SMP9[2:0] bits (Channel 9 Sample time selection) */
-  .ll.adc.smpr2 = ADC_SMPR2_SMP_AN3(ADC_SAMPLE_239P5),  /* ADC SMPR2 reg */
+  .ll.adc.smpr2 = ADC_SMPR2_SMP_AN8(ADC_SAMPLE_239P5),  /* ADC SMPR2 reg */
 
 /*******************  Bit definition for ADC_SQR1 register  **************
   ADC_SQR1_SQ13       SQ13[4:0] bits (13th conversion in regular sequence)
@@ -148,7 +148,7 @@ static const ADCConversionGroup adcgrpcfg = {
   ADC_SQR3_SQ5        SQ5[4:0] bits (5th conversion in regular sequence)
   ADC_SQR3_SQ6        SQ6[4:0] bits (6th conversion in regular sequence) */
 
-  .ll.adc.sqr3 = ADC_SQR3_SQ3_N(ADC_CHANNEL_IN3)   /* ADC SQR3 reg */
+  .ll.adc.sqr3 = ADC_SQR3_SQ3_N(ADC_CHANNEL_IN8)   /* ADC SQR3 reg */
 };
 
 void adc_err_cb(ADCDriver *adcp, adcerror_t err) {
