@@ -185,12 +185,35 @@ void ms5803_readPressureAndTemp(int64_t* pressure, int64_t* temp)
   int64_t c5 = promvals[MS5803_COEFFS_REF_TEMP];
   int64_t c6 = promvals[MS5803_COEFFS_TEMP_COEFF_OF_TEMP];
 
-  // calculate 1st order pressure and temperature (MS5607 1st order algorithm) 
+  // calculations from ms5803-01BA datasheet
+  // calculate 1st order pressure and temperature (MS5608 1st order algorithm) 
   dT       = uncomp_temp - c5 * 256; 
   OFF      = (c2 << 16) + (dT * c4) / (1 << 7);
   SENS     = (c1 << 15) + (c3 * dT) / (1 << 8); 
 
   *temp    = 2000 + (dT * c6) / (1 << 23);
+
+  // 2nd order temp compensation
+  int64_t t2    = 0;
+  int64_t off2  = 0;
+  int64_t sens2 = 0;
+
+  if (*temp < 2000) {
+    t2    = dT * dT / ( 1 << 31);
+    off2  = 3 * (*temp - 2000) * (*temp - 2000);
+    sens2 = 7 * (*temp - 2000) * (*temp - 2000) / 8;
+
+    if (*temp < -1500) {
+      sens2 = sens2 + 2 * (*temp + 1500) * (*temp + 1500);
+    }
+
+    *temp = *temp - t2;
+    OFF   = OFF - off2;
+    SENS  = SENS - sens2;
+  }
+  else if ( *temp >= 4500 ) {
+      sens2 = sens2 - (*temp - 4500) * (*temp - 4500) / 8;
+  }
 
   *pressure= ((((int64_t) uncomp_pressure) * SENS) / (1 << 21) - OFF) / 
                  (1 << 15);
