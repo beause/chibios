@@ -23,7 +23,7 @@
 
 
 static COMPConfig compcfg = {
-  .comp_enable          = COMP1_EN | COMP2_EN,
+  .comp_enable          = COMP1_EN,
   .comp1_inv_in_src     = COMP1_INPUT_SRC_12_VREFINT,
   .comp2_inv_in_src     = COMP2_INPUT_SRC_12_VREFINT,
   .comp1_hysteresis     = COMP_HYSTERESIS_MED,
@@ -34,8 +34,8 @@ static COMPConfig compcfg = {
   .comp2_opmode         = COMP_PWR_MED_SPEED,
   .comp1_output_pol     = COMP_OUTPUT_POL_NOT_INV,
   .comp2_output_pol     = COMP_OUTPUT_POL_NOT_INV,
-  .comp1_output_sel     = COMP1_OUTPUT_DEST_TIM3_IC1,
-  .comp2_output_sel     = COMP2_OUTPUT_DEST_TIM4_IC1,
+  .comp1_output_sel     = COMP1_OUTPUT_DEST_NONE,
+  .comp2_output_sel     = COMP2_OUTPUT_DEST_NONE,
 };
 
 /*
@@ -60,6 +60,12 @@ int main(void) {
 
   while (TRUE) {
     chThdSleepMilliseconds(500);
+    if (comp_lld_comp1val(&COMPD1)) {
+      palSetPad(GPIOC, GPIOC_LED4);
+    }
+    else {
+      palClearPad(GPIOC, GPIOC_LED4);
+    }
   }
 
   return 0;

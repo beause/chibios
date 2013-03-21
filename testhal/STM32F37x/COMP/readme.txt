@@ -1,5 +1,5 @@
 *****************************************************************************
-** ChibiOS/RT HAL - PWM/ICU driver demo for STM32.                         **
+** ChibiOS/RT HAL - COMP for STM32.                                        **
 *****************************************************************************
 
 ** TARGET **
@@ -8,17 +8,14 @@ The demo runs on a STM 32373C eval board.
 
 ** The Demo **
 
-The application demonstrates the use of the STM32 PWM and ICU drivers. 
-The pin PC10 is reconfigured from SPI3_CLK output to be the output of
-TIM15_CH1.  The output of the PWM can be seen on PC10.  PC10 is found on
-connector CN13.
+The application demonstrates the use of the STM32 COMP driver.
+The MCU is configured so that the Light Dependent Resistor (LD3) is connected
+to comparator 1.
 
-Pin PC7 is reconfigured to be alternate function TIM3_CH2.  PC7 is found on
-connector CN13. 
+Comparator 1 is set to compare to 1/2 VREFINT.
 
-The ICU unit will measure the generated PWM.
-
-PC10 must be connected to PC7.
+A loop in main polls the value of the output of comparator 1 and displays the
+value on LED1.
 
 ** Build Procedure **
 

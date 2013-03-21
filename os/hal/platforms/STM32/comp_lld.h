@@ -331,6 +331,8 @@ extern "C" {
   void comp_lld_init(void);
   void comp_lld_start(COMPDriver *compp);
   void comp_lld_stop(COMPDriver *compp);
+  bool_t comp_lld_comp1val(COMPDriver *compp);
+  bool_t comp_lld_comp2val(COMPDriver *compp);
 #ifdef __cplusplus
 }
 #endif

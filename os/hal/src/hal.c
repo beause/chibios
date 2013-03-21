@@ -116,6 +116,9 @@ void halInit(void) {
 #if HAL_USE_RTC || defined(__DOXYGEN__)
   rtcInit();
 #endif
+#if HAL_USE_COMP || defined(__DOXYGEN__)
+  compInit();
+#endif
   /* Board specific initialization.*/
   boardInit();
 }

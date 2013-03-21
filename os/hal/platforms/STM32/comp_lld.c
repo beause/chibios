@@ -200,6 +200,20 @@ void comp_lld_stop(COMPDriver *compdp) {
   }
 }
 
+/**
+ * @brief   Returns the value of the output of the comparator
+ *
+ * @param[in] compp      pointer to the @p COMPDriver object
+ *
+ * @notapi
+ */
+bool_t comp_lld_comp1val(COMPDriver *compp) {
+  return (compp->comp->CSR & COMP_CSR_COMP1OUT);
+}
+bool_t comp_lld_comp2val(COMPDriver *compp) {
+  return (compp->comp->CSR & COMP_CSR_COMP2OUT);
+}
+
 
 #endif /* HAL_USE_COMP */
 
