@@ -9,6 +9,10 @@
 #include "rtd.h"
 
 adcsample_t avg_rtd;
+adcsample_t avg_airtemp;
+adcsample_t avg_sense;
+adcsample_t avg_vrefint;
+
 BinarySemaphore adcOutputBinSem;
 
 msg_t printADCOutputThread(void *arg) {
@@ -35,7 +39,7 @@ void adc_err_cb(ADCDriver *adcp, adcerror_t err);
 
 
 /* Total number of channels to be sampled by a single ADC operation.*/
-#define ADC_GRP1_NUM_CHANNELS   1
+#define ADC_GRP1_NUM_CHANNELS   4
 
 /* Depth of the conversion buffer, channels are sampled four times each.*/
 #define ADC_GRP1_BUF_DEPTH      4
@@ -95,9 +99,11 @@ static const ADCConversionGroup adcgrpcfg = {
   ADC_CR2_JSWSTART    Start Conversion of injected channels
   ADC_CR2_SWSTART     Start Conversion of regular channels
   ADC_CR2_TSVREFE     Temperature Sensor and VREFINT Enable */
-  .ll.adc.cr2 = ADC_CR2_TSVREFE | ADC_CR2_EXTTRIG | 
-  ADC_CR2_EXTSEL_0 | ADC_CR2_EXTSEL_1 | ADC_CR2_EXTSEL_2 | 
-  ADC_CR2_SWSTART,   /* ADC CR2 reg */
+  .ll.adc.cr2 = ADC_CR2_EXTTRIG |  ADC_CR2_TSVREFE |
+                ADC_CR2_EXTSEL_0 | ADC_CR2_EXTSEL_1 | ADC_CR2_EXTSEL_2 | 
+                ADC_CR2_SWSTART,   /* ADC CR2 reg */
+
+/******************  Bit definition for ADC_SMPR1 register  ************
 
 /******************  Bit definition for ADC_SMPR1 register  ************
   ADC_SMPR1_SMP10     SMP10[2:0] bits (Channel 10 Sample time selection)
@@ -108,7 +114,7 @@ static const ADCConversionGroup adcgrpcfg = {
   ADC_SMPR1_SMP15     SMP15[2:0] bits (Channel 15 Sample time selection)
   ADC_SMPR1_SMP16     SMP16[2:0] bits (Channel 16 Sample time selection)
   ADC_SMPR1_SMP17     SMP17[2:0] bits (Channel 17 Sample time selection) */
-  .ll.adc.smpr1 = 0, //ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_239P5) | ADC_SMPR1_SMP_VREF(ADC_SAMPLE_239P5),
+  .ll.adc.smpr1 = ADC_SMPR1_SMP_SENSOR(ADC_SAMPLE_239P5) | ADC_SMPR1_SMP_VREF(ADC_SAMPLE_239P5),
 
 /******************  Bit definition for ADC_SMPR2 register  **********
   ADC_SMPR2_SMP0      SMP0[2:0] bits (Channel 0 Sample time selection)
@@ -121,7 +127,7 @@ static const ADCConversionGroup adcgrpcfg = {
   ADC_SMPR2_SMP7      SMP7[2:0] bits (Channel 7 Sample time selection)
   ADC_SMPR2_SMP8      SMP8[2:0] bits (Channel 8 Sample time selection)
   ADC_SMPR2_SMP9      SMP9[2:0] bits (Channel 9 Sample time selection) */
-  .ll.adc.smpr2 = ADC_SMPR2_SMP_AN8(ADC_SAMPLE_239P5),  /* ADC SMPR2 reg */
+  .ll.adc.smpr2 = ADC_SMPR2_SMP_AN8(ADC_SAMPLE_239P5) | ADC_SMPR2_SMP_AN3(ADC_SAMPLE_239P5),  /* ADC SMPR2 reg */
 
 /*******************  Bit definition for ADC_SQR1 register  **************
   ADC_SQR1_SQ13       SQ13[4:0] bits (13th conversion in regular sequence)
@@ -148,7 +154,10 @@ static const ADCConversionGroup adcgrpcfg = {
   ADC_SQR3_SQ5        SQ5[4:0] bits (5th conversion in regular sequence)
   ADC_SQR3_SQ6        SQ6[4:0] bits (6th conversion in regular sequence) */
 
-  .ll.adc.sqr3 = ADC_SQR3_SQ3_N(ADC_CHANNEL_IN8)   /* ADC SQR3 reg */
+  .ll.adc.sqr3 = ADC_SQR3_SQ1_N(ADC_CHANNEL_IN3)|
+                 ADC_SQR3_SQ2_N(ADC_CHANNEL_IN8)|
+                 ADC_SQR3_SQ3_N(ADC_CHANNEL_SENSOR)|
+                 ADC_SQR3_SQ4_N(ADC_CHANNEL_VREFINT) /* ADC SQR3 reg */
 };
 
 void adc_err_cb(ADCDriver *adcp, adcerror_t err) {
@@ -167,20 +176,22 @@ void adc_err_cb(ADCDriver *adcp, adcerror_t err) {
 void adccb(ADCDriver *adcp, adcsample_t *buffer, size_t n) {
   /* Note, only in the ADC_COMPLETE state because the ADC driver fires an
      intermediate callback when the buffer is half full.*/
-  if (adcp->state == ADC_COMPLETE) {
 
     /* Calculates the average values from the ADC samples.*/
-    avg_rtd   = (samples[0] + samples[1] + samples[2] + samples[3]) / 4;
+    avg_rtd     = (samples[0] + samples[4] + samples[8]  + samples[12]) / 4;
+    avg_airtemp = (samples[1] + samples[5] + samples[9]  + samples[13]) / 4;
+    avg_sense   = (samples[2] + samples[6] + samples[10] + samples[14]) / 4;
+    avg_vrefint = (samples[3] + samples[7] + samples[11] + samples[15]) / 4;
+
     chSysLockFromIsr();
     chBSemSignalI(&adcOutputBinSem);
     chSysUnlockFromIsr();
 
-  }
 }
 
 void testRTD() 
 {
-  chBSemInit(&adcOutputBinSem, 0); /* init to not taken */
+  chBSemInit(&adcOutputBinSem, TRUE); /* init to not taken */
   
   /***
    ***   Sample the temperature from the on-board temp sensor
@@ -202,11 +213,16 @@ void testRTD()
   /* set console output destination */
   setStreamDest(&SD2);
 
+  /* connect PT1000 / RTD pin to resistance bridge */
+  palClearPad(GPIOA, GPIOA_RTD_SEL);
+
   while (TRUE) {
     adcStartConversion(&ADCD1, &adcgrpcfg, samples, ADC_GRP1_BUF_DEPTH);
     if (chBSemWait(&adcOutputBinSem) != RDY_OK) {
       chDbgPanic("ERROR - adcOutputBinSem reset");
     }
+
+    /* calculate Temperature */
     chThdSleepMilliseconds(1000);
   }
 }
