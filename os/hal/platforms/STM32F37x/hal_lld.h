@@ -643,6 +643,16 @@
 #if !defined(STM32_USBPRE) || defined(__DOXYGEN__)
 #define STM32_USBPRE                        STM32_USBPRE_DIV1P5
 #endif
+
+/**
+ * @brief   SDADC  initialization.
+ */
+#if 0
+#if !defined(STM32_SDADCPRE) || defined(__DOXYGEN__)
+#define STM32_SDADCPRE                      STM32_SDADCPRE_DIV12
+#endif
+#endif
+
 /** @} */
 
 /*===========================================================================*/
@@ -1013,7 +1023,7 @@
 #error "invalid STM32_ADCPRE value specified"
 #endif
 
-/* SdADC maximum frequency check.*/
+/* SDADC maximum frequency check.*/
 #if STM32_SDADCLK > STM32_SDADCCLK_FAST_MAX
 #error "STM32_SDADCLK exceeding maximum frequency (STM32_SDADCCLK_FAST_MAX)"
 #endif

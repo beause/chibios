@@ -637,7 +637,7 @@ struct ADCDriver {
  * @{
  */
 #define  sdadcSTM32Channel1TO7Config(SDADC_Channel, SDADC_Conf) ((uint32_t) (SDADC_Conf << (( SDADC_Channel >> 16) << 2)))
-#define  sdadcSTM32Channel8Config(SDADC_Channel, SDADC_Conf) ((uint32_t) SDADC_CONF)
+#define  sdadcSTM32Channel8Config(SDADC_Channel, SDADC_Conf) ((uint32_t) SDADC_Conf)
 
 #define  sdadcSTM32ChannelSelect(SDADC_Channel) ((uint32_t) (SDADC_Channel & 0xffff0000))
 

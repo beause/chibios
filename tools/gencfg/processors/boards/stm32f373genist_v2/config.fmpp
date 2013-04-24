@@ -1,0 +1,5 @@
+sourceRoot: templates
+outputRoot: output
+data: {
+    doc1: xml(../../../../xml/stm32f373genist_v2.xml)
+}
