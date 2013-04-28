@@ -86,7 +86,10 @@ CSRC = $(PORTSRC) \
        ms5803.c \
        rtd.c \
        led.c \
-       main.c
+       itmstream.c \
+       main.c \
+       $(CHIBIOS)/os/various/chprintf.c
+       
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

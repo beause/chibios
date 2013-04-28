@@ -8,13 +8,16 @@
 #include "ms5803.h"
 #include "rtd.h"
 #include "led.h"
+#include "itmstream.h"
 
 #define RTD
+#define BLINKER
+#define MS5803
 /*
  * This is a periodic thread that does absolutely nothing except flashing LEDs.
  */
 static WORKING_AREA(waThread1, 128);
-static WORKING_AREA(waThreadPressureSensor, 256);
+static WORKING_AREA(waThreadPressureSensor, 512);
 static WORKING_AREA(waThread3, 128);
 static WORKING_AREA(waThread4, 128);
 
@@ -46,6 +49,7 @@ static msg_t ThreadPressureSense(void *arg) {
 
   while (TRUE) {  
     ms5803_readPressureAndTemp(&pressure, &temp);
+    itmprintf("Temp: %d Pressure: %d\n", (int)temp, (int)pressure);
     chThdSleepMilliseconds(1000);
   }
   return 0;
@@ -96,7 +100,7 @@ int main(void) {
    * sleeping in a loop and check the button state, when the button is
    * pressed the test procedure is launched.
    */
-
+  itmprintf("Hello there!\n");
   while (TRUE) {
     chThdSleepMilliseconds(1000);
   }
