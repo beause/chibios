@@ -60,9 +60,9 @@
 #define STM32_TIM15_HANDLER         VectorA0
 #define STM32_TIM19_HANDLER         Vector178
 
-#define STM32_TIM2_NUMBER           28
-#define STM32_TIM3_NUMBER           29
-#define STM32_TIM4_NUMBER           30
+#define STM32_TIM2_NUMBER           TIM2_IRQn
+#define STM32_TIM3_NUMBER           TIM3_IRQn
+#define STM32_TIM4_NUMBER           TIM4_IRQn
 #define STM32_TIM5_NUMBER           TIM5_IRQn
 #define STM32_TIM15_NUMBER          TIM15_IRQn
 #define STM32_TIM19_NUMBER          TIM19_IRQn
@@ -74,9 +74,9 @@
 #define STM32_USART2_HANDLER        VectorD8
 #define STM32_USART3_HANDLER        VectorDC
 
-#define STM32_USART1_NUMBER         37
-#define STM32_USART2_NUMBER         38
-#define STM32_USART3_NUMBER         39
+#define STM32_USART1_NUMBER         USART1_IRQn
+#define STM32_USART2_NUMBER         USART2_IRQn
+#define STM32_USART3_NUMBER         USART3_IRQn
 
 /*
  * USB units.
@@ -84,8 +84,8 @@
 #define STM32_USB1_HP_HANDLER       Vector168
 #define STM32_USB1_LP_HANDLER       Vector16C
 
-#define STM32_USB1_HP_NUMBER        74
-#define STM32_USB1_LP_NUMBER        75
+#define STM32_USB1_HP_NUMBER        USB_HP_IRQn
+#define STM32_USB1_LP_NUMBER        USB_LP_IRQn
 /** @} */
 
 /*===========================================================================*/

@@ -282,7 +282,7 @@
  * GPIOB setup:
  *
  * PB0  - AIR_TEMP                 (analog). ADC_IN8/SDADC_AIN6P
- * PB1  - HALL_B                   (input).
+ * PB1  - HALL_B                   (alternate 2).
  * PB2  - HALL_A                   (input pullup).
  * PB3  - SWO                      (input).
  * PB4  - PIN4                     (input floating).
@@ -299,7 +299,7 @@
  * PB15 - VAR_RUC2                 (input pullup).
  */
 #define VAL_GPIOB_MODER             (PIN_MODE_ANALOG(   GPIOB_AIR_TEMP) |        \
-                                     PIN_MODE_INPUT(    GPIOB_HALL_B) |    \
+                                     PIN_MODE_ALTERNATE(GPIOB_HALL_B) |    \
                                      PIN_MODE_INPUT(    GPIOB_HALL_A) |           \
                                      PIN_MODE_ALTERNATE(GPIOB_SWO) |        \
                                      PIN_MODE_INPUT(    GPIOB_PIN4) |          \
@@ -360,39 +360,39 @@
                                      PIN_PUPDR_PULLUP(GPIOB_PIN11) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN12) |        \
                                      PIN_PUPDR_PULLUP(GPIOB_PIN13) |        \
-                                     PIN_PUPDR_PULLUP(GPIOB_VAR_RUC1) |        \
+                                     PIN_PUPDR_PULLUP(GPIOB_VAR_RUC1) |     \
                                      PIN_PUPDR_PULLUP(GPIOB_VAR_RUC2))
-#define VAL_GPIOB_ODR               (PIN_ODR_HIGH(GPIOB_AIR_TEMP) |           \
-                                     PIN_ODR_HIGH(GPIOB_HALL_B) |       \
-                                     PIN_ODR_HIGH(GPIOB_HALL_A) |             \
+#define VAL_GPIOB_ODR               (PIN_ODR_HIGH(GPIOB_AIR_TEMP) |         \
+                                     PIN_ODR_HIGH(GPIOB_HALL_B) |           \
+                                     PIN_ODR_HIGH(GPIOB_HALL_A) |           \
                                      PIN_ODR_HIGH(GPIOB_SWO) |              \
-                                     PIN_ODR_HIGH(GPIOB_PIN4) |            \
-                                     PIN_ODR_HIGH(GPIOB_XCVR_INT) |             \
-                                     PIN_ODR_HIGH(GPIOB_AIR_HEATER) |         \
-                                     PIN_ODR_HIGH(GPIOB_XCVR_CS) |         \
-                                     PIN_ODR_HIGH(GPIOB_EXTDRV_STAT) |             \
-                                     PIN_ODR_HIGH(GPIOB_PWR_FAULT) |             \
+                                     PIN_ODR_HIGH(GPIOB_PIN4) |             \
+                                     PIN_ODR_HIGH(GPIOB_XCVR_INT) |         \
+                                     PIN_ODR_HIGH(GPIOB_AIR_HEATER) |       \
+                                     PIN_ODR_HIGH(GPIOB_XCVR_CS) |          \
+                                     PIN_ODR_HIGH(GPIOB_EXTDRV_STAT) |      \
+                                     PIN_ODR_HIGH(GPIOB_PWR_FAULT) |        \
                                      PIN_ODR_HIGH(GPIOB_PIN10) |            \
                                      PIN_ODR_HIGH(GPIOB_PIN11) |            \
                                      PIN_ODR_HIGH(GPIOB_PIN12) |            \
                                      PIN_ODR_HIGH(GPIOB_PIN13) |            \
-                                     PIN_ODR_HIGH(GPIOB_VAR_RUC1) |            \
+                                     PIN_ODR_HIGH(GPIOB_VAR_RUC1) |         \
                                      PIN_ODR_HIGH(GPIOB_VAR_RUC2))
-#define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_AIR_TEMP, 0) |         \
-                                     PIN_AFIO_AF(GPIOB_HALL_B, 0) |     \
-                                     PIN_AFIO_AF(GPIOB_HALL_A, 0) |           \
+#define VAL_GPIOB_AFRL              (PIN_AFIO_AF(GPIOB_AIR_TEMP, 0) |       \
+                                     PIN_AFIO_AF(GPIOB_HALL_B, 2) |         \
+                                     PIN_AFIO_AF(GPIOB_HALL_A, 0) |         \
                                      PIN_AFIO_AF(GPIOB_SWO, 0) |            \
-                                     PIN_AFIO_AF(GPIOB_PIN4, 0) |          \
-                                     PIN_AFIO_AF(GPIOB_XCVR_INT, 0) |           \
-                                     PIN_AFIO_AF(GPIOB_AIR_HEATER, 0) |       \
+                                     PIN_AFIO_AF(GPIOB_PIN4, 0) |           \
+                                     PIN_AFIO_AF(GPIOB_XCVR_INT, 0) |       \
+                                     PIN_AFIO_AF(GPIOB_AIR_HEATER, 0) |     \
                                      PIN_AFIO_AF(GPIOB_XCVR_CS, 0))
-#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_EXTDRV_STAT, 0) |           \
-                                     PIN_AFIO_AF(GPIOB_PWR_FAULT, 0) |           \
+#define VAL_GPIOB_AFRH              (PIN_AFIO_AF(GPIOB_EXTDRV_STAT, 0) |    \
+                                     PIN_AFIO_AF(GPIOB_PWR_FAULT, 0) |      \
                                      PIN_AFIO_AF(GPIOB_PIN10, 0) |          \
                                      PIN_AFIO_AF(GPIOB_PIN11, 0) |          \
                                      PIN_AFIO_AF(GPIOB_PIN12, 0) |          \
                                      PIN_AFIO_AF(GPIOB_PIN13, 0) |          \
-                                     PIN_AFIO_AF(GPIOB_VAR_RUC1, 0) |          \
+                                     PIN_AFIO_AF(GPIOB_VAR_RUC1, 0) |       \
                                      PIN_AFIO_AF(GPIOB_VAR_RUC2, 0))
 
 /*

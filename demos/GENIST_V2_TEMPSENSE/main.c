@@ -31,7 +31,9 @@ static msg_t TakeTempThread(void *arg)
 {
 
     chRegSetThreadName("taketemp");
-    takeTemp();
+    while (TRUE) {
+        takeTemp();
+    }
     return 0;
 }
 

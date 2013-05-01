@@ -98,6 +98,15 @@
 #endif
 
 /**
+ * @brief   GPTD19 driver enable switch.
+ * @details If set to @p TRUE the support for GPTD8 is included.
+ * @note    The default is @p TRUE.
+ */
+#if !defined(STM32_GPT_USE_TIM19) || defined(__DOXYGEN__)
+#define STM32_GPT_USE_TIM19                 FALSE
+#endif
+
+/**
  * @brief   GPTD1 interrupt priority level setting.
  */
 #if !defined(STM32_GPT_TIM1_IRQ_PRIORITY) || defined(__DOXYGEN__)
@@ -133,10 +142,18 @@
 #endif
 
 /**
- * @brief   GPTD5 interrupt priority level setting.
+ * @brief   GPTD8 interrupt priority level setting.
  */
 #if !defined(STM32_GPT_TIM8_IRQ_PRIORITY) || defined(__DOXYGEN__)
 #define STM32_GPT_TIM8_IRQ_PRIORITY         7
+#endif
+/** @} */
+
+/**
+ * @brief   GPTD19 interrupt priority level setting.
+ */
+#if !defined(STM32_GPT_TIM19_IRQ_PRIORITY) || defined(__DOXYGEN__)
+#define STM32_GPT_TIM19_IRQ_PRIORITY        7
 #endif
 /** @} */
 
@@ -168,9 +185,14 @@
 #error "TIM8 not present in the selected device"
 #endif
 
+#if STM32_GPT_USE_TIM19 && !STM32_HAS_TIM19
+#error "TIM19 not present in the selected device"
+#endif
+
 #if !STM32_GPT_USE_TIM1 && !STM32_GPT_USE_TIM2 &&                           \
     !STM32_GPT_USE_TIM3 && !STM32_GPT_USE_TIM4 &&                           \
-    !STM32_GPT_USE_TIM5 && !STM32_GPT_USE_TIM8
+    !STM32_GPT_USE_TIM5 && !STM32_GPT_USE_TIM8 &&                           \
+    !STM32_GPT_USE_TIM19
 #error "GPT driver activated but no TIM peripheral assigned"
 #endif
 
@@ -202,6 +224,11 @@
 #if STM32_GPT_USE_TIM8 &&                                                   \
     !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM8_IRQ_PRIORITY)
 #error "Invalid IRQ priority assigned to TIM8"
+#endif
+
+#if STM32_GPT_USE_TIM19 &&                                                   \
+    !CORTEX_IS_VALID_KERNEL_PRIORITY(STM32_GPT_TIM19_IRQ_PRIORITY)
+#error "Invalid IRQ priority assigned to TIM19"
 #endif
 
 /*===========================================================================*/
@@ -293,6 +320,10 @@ extern GPTDriver GPTD5;
 
 #if STM32_GPT_USE_TIM8 && !defined(__DOXYGEN__)
 extern GPTDriver GPTD8;
+#endif
+
+#if STM32_GPT_USE_TIM19 && !defined(__DOXYGEN__)
+extern GPTDriver GPTD19;
 #endif
 
 #ifdef __cplusplus

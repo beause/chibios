@@ -18,7 +18,9 @@
  */
 
 #define STM32F37x_MCUCONF
+
 #define HAL_USE_ICU     TRUE
+#define HAL_USE_PWM     TRUE
 /*
  * HAL driver system settings.
  */
@@ -95,7 +97,7 @@
  */
 #define STM32_ICU_USE_TIM1                  FALSE
 #define STM32_ICU_USE_TIM2                  FALSE
-#define STM32_ICU_USE_TIM3                  TRUE
+#define STM32_ICU_USE_TIM3                  FALSE
 #define STM32_ICU_USE_TIM4                  FALSE
 #define STM32_ICU_USE_TIM8                  FALSE
 #define STM32_ICU_TIM1_IRQ_PRIORITY         7

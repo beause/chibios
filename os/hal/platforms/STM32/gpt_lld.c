@@ -87,6 +87,14 @@ GPTDriver GPTD5;
 GPTDriver GPTD8;
 #endif
 
+/**
+ * @brief   GPTD19 driver identifier.
+ * @note    The driver GPTD8 allocates the timer TIM8 when enabled.
+ */
+#if STM32_GPT_USE_TIM19 || defined(__DOXYGEN__)
+GPTDriver GPTD19;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -228,6 +236,25 @@ CH_IRQ_HANDLER(STM32_TIM8_UP_HANDLER) {
 }
 #endif /* STM32_GPT_USE_TIM8 */
 
+#if STM32_GPT_USE_TIM19
+#if !defined(STM32_TIM19_HANDLER)
+#error "STM32_TIM19_HANDLER not defined"
+#endif
+/**
+ * @brief   TIM19 interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(STM32_TIM19_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  gpt_lld_serve_interrupt(&GPTD19);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* STM32_GPT_USE_TIM19 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -273,6 +300,12 @@ void gpt_lld_init(void) {
   /* Driver initialization.*/
   GPTD8.tim = STM32_TIM8;
   gptObjectInit(&GPTD8);
+#endif
+
+#if STM32_GPT_USE_TIM19
+  /* Driver initialization.*/
+  GPTD19.tim = STM32_TIM19;
+  gptObjectInit(&GPTD19);
 #endif
 }
 
@@ -344,7 +377,17 @@ void gpt_lld_start(GPTDriver *gptp) {
       gptp->clock = STM32_TIMCLK2;
     }
 #endif
-  }
+
+#if STM32_GPT_USE_TIM19
+    if (&GPTD19 == gptp) {
+      rccEnableTIM19(FALSE);
+      rccResetTIM19();
+      nvicEnableVector(STM32_TIM19_NUMBER,
+                       CORTEX_PRIORITY_MASK(STM32_GPT_TIM19_IRQ_PRIORITY));
+      gptp->clock = STM32_TIMCLK1;
+    }
+#endif
+}
 
   /* Prescaler value calculation.*/
   psc = (uint16_t)((gptp->clock / gptp->config->frequency) - 1);
@@ -406,6 +449,12 @@ void gpt_lld_stop(GPTDriver *gptp) {
     if (&GPTD8 == gptp) {
       nvicDisableVector(STM32_TIM8_UP_NUMBER);
       rccDisableTIM8(FALSE);
+    }
+#endif
+#if STM32_GPT_USE_TIM19
+    if (&GPTD19 == gptp) {
+      nvicDisableVector(STM32_TIM19_NUMBER);
+      rccDisableTIM19(FALSE);
     }
 #endif
   }

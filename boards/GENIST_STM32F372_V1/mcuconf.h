@@ -19,6 +19,7 @@
 
 #define STM32F37x_MCUCONF
 #define HAL_USE_ICU     TRUE
+#define HAL_USE_PWM     TRUE
 /*
  * HAL driver system settings.
  */
@@ -84,25 +85,29 @@
 #define STM32_GPT_USE_TIM3                  FALSE
 #define STM32_GPT_USE_TIM4                  FALSE
 #define STM32_GPT_USE_TIM8                  FALSE
+#define STM32_GPT_USE_TIM19                 FALSE
 #define STM32_GPT_TIM1_IRQ_PRIORITY         7
 #define STM32_GPT_TIM2_IRQ_PRIORITY         7
 #define STM32_GPT_TIM3_IRQ_PRIORITY         7
 #define STM32_GPT_TIM4_IRQ_PRIORITY         7
 #define STM32_GPT_TIM8_IRQ_PRIORITY         7
+#define STM32_GPT_TIM19_IRQ_PRIORITY        7
 
 /*
  * ICU driver system settings.
  */
 #define STM32_ICU_USE_TIM1                  FALSE
 #define STM32_ICU_USE_TIM2                  FALSE
-#define STM32_ICU_USE_TIM3                  TRUE
+#define STM32_ICU_USE_TIM3                  FALSE
 #define STM32_ICU_USE_TIM4                  FALSE
 #define STM32_ICU_USE_TIM8                  FALSE
+#define STM32_ICU_USE_TIM19                 TRUE
 #define STM32_ICU_TIM1_IRQ_PRIORITY         7
 #define STM32_ICU_TIM2_IRQ_PRIORITY         7
 #define STM32_ICU_TIM3_IRQ_PRIORITY         7
 #define STM32_ICU_TIM4_IRQ_PRIORITY         7
 #define STM32_ICU_TIM8_IRQ_PRIORITY         7
+#define STM32_ICU_TIM19_IRQ_PRIORITY        7
 
 /*
  * PWM driver system settings.

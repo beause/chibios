@@ -36,7 +36,7 @@ ADCConversionGroup adcCalibOffsetGroup = {
           /* CR2  - do not set SDADC_CR2_RWSTART
              since this is for calibration of the offsets, we let the
              driver function set the SDADC_CR2_STARTCALIB bit */
-          .cr2   = sdadcSTM32ChannelSelect( SDADC_Channel_8 ) |
+          .cr2   = sdadcSTM32ChannelSelect( SDADC_Channel_2 ) |
                     SDADC_CR2_ADON, 
           .jchgr = 0,  /* jchgr */
           .conf0r = SDADC_CONFxR_COMMON_VSSA |
@@ -47,7 +47,7 @@ ADCConversionGroup adcCalibOffsetGroup = {
                     SDADC_CONFxR_SE0_DIFFERENTIAL,
           .conf2r = 0,
           /* ch8 uses conf1 */
-          .confchr1 = 0,
+          .confchr1 = sdadcSTM32Channel1TO7Config( SDADC_Channel_2, 0),
           .confchr2 = sdadcSTM32Channel8Config( SDADC_Channel_8, 1),
   }
 };
@@ -96,7 +96,7 @@ ADCConversionGroup adcCalibConvGroup = {
 
   .ll.sdadc = {
           .cr1   = 0,  /* CR1 */
-          .cr2   = sdadcSTM32ChannelSelect( SDADC_Channel_8 ) |
+          .cr2   = sdadcSTM32ChannelSelect( SDADC_Channel_2 ) |
                     SDADC_CR2_RSWSTART | SDADC_CR2_ADON,  /* CR2 */
           .jchgr = 0,  /* jchgr */
           .conf0r = SDADC_CONFxR_COMMON_VSSA |
@@ -107,7 +107,7 @@ ADCConversionGroup adcCalibConvGroup = {
                     SDADC_CONFxR_SE0_DIFFERENTIAL,
           .conf2r = 0,
           /* ch8 uses conf1 */
-          .confchr1 = 0,
+          .confchr1 = sdadcSTM32Channel1TO7Config( SDADC_Channel_2, 0),
           .confchr2 = sdadcSTM32Channel8Config( SDADC_Channel_8, 1),
   }
 
@@ -142,8 +142,8 @@ float SDADC_Calibration(void)
   adcsample_t sample = 0xdead;
 
   /* In prior to the Calibration execution, the SDADC should be configured
-     in single mode, a common SDADC configuration phase(RCC, GPIO, SDADC configuration
-     steps, Channel configuration...) are managed by the above SDADC_Config() function */
+     in differential mode, a common SDADC configuration phase(RCC, GPIO, SDADC configuration
+     steps, Channel configuration...) are managed by the above PT100_Config() function */
   for (samplescounter = 0; samplescounter < CONFIG_SAMPLE_ITER; samplescounter++)
   {
     adcStartConversion(&SDADCD1, &adcCalibConvGroup, &sample, 1);
@@ -174,7 +174,7 @@ ADCConversionGroup adcRegConvGroup = {
 
   .ll.sdadc = {
           .cr1   = 0,  /* CR1 */
-          .cr2   = sdadcSTM32ChannelSelect( SDADC_Channel_8 ) |
+          .cr2   = sdadcSTM32ChannelSelect( SDADC_Channel_2 ) |
                     SDADC_CR2_RSWSTART | SDADC_CR2_ADON,  /* CR2 */
           .jchgr = 0,  /* jchgr */
           .conf0r = SDADC_CONFxR_COMMON_VSSA |
@@ -185,7 +185,7 @@ ADCConversionGroup adcRegConvGroup = {
                      SDADC_CONFxR_SE0_DIFFERENTIAL,  /* conf1r */
           .conf2r = 0,
           /* ch8 uses conf1 */
-          .confchr1 = 0,
+          .confchr1 = sdadcSTM32Channel1TO7Config( SDADC_Channel_2, 0),
           .confchr2 = sdadcSTM32Channel8Config( SDADC_Channel_8, 1 ),
   }
 
@@ -222,15 +222,13 @@ void takeTemp()
   test_println("Then press the key button.");
 
   waitForKeypress();
-
+#endif
   coeffcorrection = SDADC_Calibration();
-
+#if 0
   test_println("Calibrated...now set jumper J18 back to pins 1-2, not 2-3");
   test_println("Then press the key button.");
 
   waitForKeypress();
-#else
-  coeffcorrection = 1;
 #endif
   test_println("Measuring temperature");
   while (sdadcidx < PT100_BUFFER_SIZE)

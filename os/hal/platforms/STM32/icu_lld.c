@@ -91,6 +91,14 @@ ICUDriver ICUD5;
 ICUDriver ICUD8;
 #endif
 
+/**
+ * @brief   ICUD19 driver identifier.
+ * @note    The driver ICUD19 allocates the timer TIM19 when enabled.
+ */
+#if STM32_ICU_USE_TIM19 || defined(__DOXYGEN__)
+ICUDriver ICUD19;
+#endif
+
 /*===========================================================================*/
 /* Driver local variables and types.                                         */
 /*===========================================================================*/
@@ -301,6 +309,28 @@ CH_IRQ_HANDLER(STM32_TIM8_CC_HANDLER) {
 }
 #endif /* STM32_ICU_USE_TIM8 */
 
+#if STM32_ICU_USE_TIM19
+#if !defined(STM32_TIM19_HANDLER)
+#error "STM32_TIM19_HANDLER not defined"
+#endif
+/**
+ * @brief   TIM8 compare interrupt handler.
+ * @note    It is assumed that the various sources are only activated if the
+ *          associated callback pointer is not equal to @p NULL in order to not
+ *          perform an extra check in a potentially critical interrupt handler.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(STM32_TIM19_HANDLER) {
+
+  CH_IRQ_PROLOGUE();
+
+  icu_lld_serve_interrupt(&ICUD19);
+
+  CH_IRQ_EPILOGUE();
+}
+#endif /* STM32_ICU_USE_TIM19 */
+
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -346,6 +376,12 @@ void icu_lld_init(void) {
   /* Driver initialization.*/
   icuObjectInit(&ICUD8);
   ICUD8.tim = STM32_TIM8;
+#endif
+
+#if STM32_ICU_USE_TIM19
+  /* Driver initialization.*/
+  icuObjectInit(&ICUD19);
+  ICUD19.tim = STM32_TIM19;
 #endif
 }
 
@@ -413,6 +449,7 @@ void icu_lld_start(ICUDriver *icup) {
       icup->clock = STM32_TIMCLK1;
     }
 #endif
+
 #if STM32_ICU_USE_TIM8
     if (&ICUD8 == icup) {
       rccEnableTIM8(FALSE);
@@ -424,6 +461,17 @@ void icu_lld_start(ICUDriver *icup) {
       icup->clock = STM32_TIMCLK2;
     }
 #endif
+
+#if STM32_ICU_USE_TIM19
+    if (&ICUD19 == icup) {
+      rccEnableTIM19(FALSE);
+      rccResetTIM19();
+      nvicEnableVector(STM32_TIM19_NUMBER,
+                       CORTEX_PRIORITY_MASK(STM32_ICU_TIM19_IRQ_PRIORITY));
+      icup->clock = STM32_TIMCLK1;
+    }
+#endif
+
   }
   else {
     /* Driver re-configuration scenario, it must be stopped first.*/
