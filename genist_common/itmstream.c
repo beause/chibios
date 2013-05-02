@@ -9,6 +9,7 @@
 #include "ch.h"
 #include "hal.h"
 
+volatile int32_t ITM_RxBuffer;
 
 size_t ITMWrite(void *instance, const uint8_t *bp, size_t n)
 {
@@ -21,6 +22,18 @@ size_t ITMWrite(void *instance, const uint8_t *bp, size_t n)
     return n;
 }
 
+size_t ITMRead(void *instance, uint8_t *bp, size_t n)
+{
+    size_t count = 0;
+    (void) instance;
+    while ((count < n) && ITM_CheckChar())
+    {
+        bp[count++] = ITM_ReceiveChar();
+    }
+    return count;
+}
+
+
 msg_t ITMPut(void *instance, uint8_t b)
 {
     (void) instance;
@@ -28,9 +41,17 @@ msg_t ITMPut(void *instance, uint8_t b)
     return 0;
 }
 
+msg_t ITMGet(void *instance)
+{
+    (void) instance;
+    return ITM_ReceiveChar();
+}
+
 struct BaseSequentialStreamVMT ITMStreamOpts = {
         .write = ITMWrite,
-        .put = ITMPut
+        .read = ITMRead,
+        .put = ITMPut,
+        .get = ITMGet
 };
 
 BaseSequentialStream ITMStream = {

@@ -9,8 +9,10 @@
 #define THREADLIST_H_
 
 /* Add other threads here */
-void startThreadHallSpeed(void);
+void startThreadSpeed(void);
 void startThreadBlinker(void);
 void startThreadPressureSensor(void);
 void startThreadRTD(void);
+void startThreadMonitor(void);
+void startThreadStateMachine(void);
 #endif /* THREADLIST_H_ */

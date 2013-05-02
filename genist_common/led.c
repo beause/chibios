@@ -9,9 +9,9 @@ DECLARE_THREAD(ThreadBlinker, NORMALPRIO, 128)
  * Set LED color
  * @param color
  */
-void setLEDColor(uint8_t color)
+void setLEDColor(uint32_t color)
 {
-    if (color & LED_RED)
+    if (color & LED_RED_MASK)
     {
         palClearPad(GPIOC, GPIOC_LED_R);
     }
@@ -20,7 +20,7 @@ void setLEDColor(uint8_t color)
         palSetPad(GPIOC, GPIOC_LED_R);
     }
 
-    if (color & LED_GREEN)
+    if (color & LED_GREEN_MASK)
     {
         palClearPad(GPIOC, GPIOC_LED_G);
     }
@@ -29,7 +29,7 @@ void setLEDColor(uint8_t color)
         palSetPad(GPIOC, GPIOC_LED_G);
     }
 
-    if (color & LED_BLUE)
+    if (color & LED_BLUE_MASK)
     {
         palClearPad(GPIOC, GPIOC_LED_B);
     }

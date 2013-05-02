@@ -8,7 +8,12 @@
 #ifndef FAKE_H_
 #define FAKE_H_
 
+#define PWM_STATE_NORMAL            0
+#define PWM_STATE_AIRGAP_WARNING    1
+#define PWM_STATE_EL_WARNING        2
+
 void startFakeSpeed(void);
 void setFakeSpeed(int speed);
+void setFakePwm(int speed, int mode);
 
 #endif /* FAKE_H_ */

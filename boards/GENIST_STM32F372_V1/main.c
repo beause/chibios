@@ -11,6 +11,8 @@
 #include "itmstream.h"
 #include "fake.h"
 #include "threadlist.h"
+#include "inputs.h"
+#include "statemachine.h"
 #define RTD
 #define BLINKER
 //#define MS5803
@@ -74,7 +76,6 @@ static msg_t ThreadRTD(void *arg)
 int main(void)
 {
     int speed;
-    int i;
     /*
      * System initializations.
      * - HAL initialization, this also initializes the configured device drivers
@@ -84,12 +85,13 @@ int main(void)
      */
     halInit();
     chSysInit();
-
-    startThreadHallSpeed();
+    StateMachineMailboxInit();
+    startThreadStateMachine();
+    startThreadSpeed();
     startThreadBlinker();
     startThreadPressureSensor();
+    //startThreadMonitor();
     //startThreadRTD();
-
     startFakeSpeed();
     /*
      * Normal main() thread activity, in this demo it does nothing except
@@ -110,6 +112,7 @@ int main(void)
         {
             setFakeSpeed(speed);
             itmprintf("Fake speed: %d\n", speed);
+#if 0
             for (i = 0; i < 20; i++)
             {
                 itmprintf("Temp: %d\n", ReadAirTemp());
@@ -117,6 +120,9 @@ int main(void)
                 itmprintf("Speed: %d\n", ReadSpeed());
                 chThdSleepMilliseconds(2000);
             }
+#else
+            chThdSleepMilliseconds(10000);
+#endif
         }
     }
 }

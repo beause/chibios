@@ -775,25 +775,25 @@
 /*
  * GPIOF setup:
  *
- * PF0  - OSC_IN                    (alternate 0).
- * PF1  - OSC_OUT                   (alternate 0).
- * PF2  - PIN2                      (input pullup).
- * PF3  - PIN3                      (input pullup).
+ * PF0  - OSC_IN                    (input floating).
+ * PF1  - OSC_OUT                   (input floating).
+ * PF2  - PIN2                      (input floating).
+ * PF3  - PIN3                      (input floating).
  * PF4  - AIR_HEAT                  (output pushpull minimum).
- * PF5  - PIN5                      (input pullup).
- * PF6  - LSM_DR                    (input pullup).
- * PF7  - PIN7                      (input pullup).
- * PF8  - PIN8                      (input pullup).
- * PF9  - LSM_IN1                   (input pullup).
- * PF10 - LSM_IN2                   (input pullup).
- * PF11 - PIN11                     (input pullup).
- * PF12 - PIN12                     (input pullup).
- * PF13 - PIN13                     (input pullup).
- * PF14 - PIN14                     (input pullup).
- * PF15 - PIN15                     (input pullup).
+ * PF5  - PIN5                      (input floating).
+ * PF6  - LSM_DR                    (input floating).
+ * PF7  - PIN7                      (input floating).
+ * PF8  - PIN8                      (input floating).
+ * PF9  - LSM_IN1                   (input floating).
+ * PF10 - LSM_IN2                   (input floating).
+ * PF11 - PIN11                     (input floating).
+ * PF12 - PIN12                     (input floating).
+ * PF13 - PIN13                     (input floating).
+ * PF14 - PIN14                     (input floating).
+ * PF15 - PIN15                     (input floating).
  */
-#define VAL_GPIOF_MODER             (PIN_MODE_ALTERNATE(GPIOF_OSC_IN) |     \
-                                     PIN_MODE_ALTERNATE(GPIOF_OSC_OUT) |    \
+#define VAL_GPIOF_MODER             (PIN_MODE_INPUT(GPIOF_OSC_IN) |         \
+                                     PIN_MODE_INPUT(GPIOF_OSC_OUT) |        \
                                      PIN_MODE_INPUT(GPIOF_PIN2) |           \
                                      PIN_MODE_INPUT(GPIOF_PIN3) |           \
                                      PIN_MODE_OUTPUT(GPIOF_AIR_HEAT) |      \
@@ -824,8 +824,8 @@
                                      PIN_OTYPE_PUSHPULL(GPIOF_PIN13) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOF_PIN14) |      \
                                      PIN_OTYPE_PUSHPULL(GPIOF_PIN15))
-#define VAL_GPIOF_OSPEEDR           (PIN_OSPEED_2M(GPIOF_OSC_IN) |          \
-                                     PIN_OSPEED_2M(GPIOF_OSC_OUT) |         \
+#define VAL_GPIOF_OSPEEDR           (PIN_OSPEED_100M(GPIOF_OSC_IN) |        \
+                                     PIN_OSPEED_100M(GPIOF_OSC_OUT) |       \
                                      PIN_OSPEED_2M(GPIOF_PIN2) |            \
                                      PIN_OSPEED_2M(GPIOF_PIN3) |            \
                                      PIN_OSPEED_2M(GPIOF_AIR_HEAT) |        \
@@ -840,22 +840,22 @@
                                      PIN_OSPEED_2M(GPIOF_PIN13) |           \
                                      PIN_OSPEED_2M(GPIOF_PIN14) |           \
                                      PIN_OSPEED_2M(GPIOF_PIN15))
-#define VAL_GPIOF_PUPDR             (PIN_PUPDR_PULLUP(GPIOF_OSC_IN) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_OSC_OUT) |      \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN2) |         \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN3) |         \
-                                     PIN_PUPDR_PULLUP(GPIOF_AIR_HEAT) |     \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN5) |         \
-                                     PIN_PUPDR_PULLUP(GPIOF_LSM_DR) |       \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN7) |         \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN8) |         \
-                                     PIN_PUPDR_PULLUP(GPIOF_LSM_IN1) |      \
-                                     PIN_PUPDR_PULLUP(GPIOF_LSM_IN2) |      \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN11) |        \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN12) |        \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN13) |        \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN14) |        \
-                                     PIN_PUPDR_PULLUP(GPIOF_PIN15))
+#define VAL_GPIOF_PUPDR             (PIN_PUPDR_FLOATING(GPIOF_OSC_IN) |     \
+                                     PIN_PUPDR_FLOATING(GPIOF_OSC_OUT) |    \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN2) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN3) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_AIR_HEAT) |   \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN5) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_LSM_DR) |     \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN7) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN8) |       \
+                                     PIN_PUPDR_FLOATING(GPIOF_LSM_IN1) |    \
+                                     PIN_PUPDR_FLOATING(GPIOF_LSM_IN2) |    \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN11) |      \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN12) |      \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN13) |      \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN14) |      \
+                                     PIN_PUPDR_FLOATING(GPIOF_PIN15))
 #define VAL_GPIOF_ODR               (PIN_ODR_HIGH(GPIOF_OSC_IN) |           \
                                      PIN_ODR_HIGH(GPIOF_OSC_OUT) |          \
                                      PIN_ODR_HIGH(GPIOF_PIN2) |             \

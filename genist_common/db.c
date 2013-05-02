@@ -24,7 +24,7 @@ float dbGetWheelScaleFactor(void)
  * Get the threshold between high and low pressure
  * @return
  */
-int dbGetPressureUpperThreshold(void)
+int32_t dbGetPressureUpperThreshold(void)
 {
     return 10100;
 }
@@ -33,7 +33,7 @@ int dbGetPressureUpperThreshold(void)
  * Get the threshold between high and low pressure
  * @return
  */
-int dbGetPressureLowerThreshold(void)
+int32_t dbGetPressureLowerThreshold(void)
 {
     return 10100;
 }
@@ -43,37 +43,66 @@ int dbGetPressureLowerThreshold(void)
  * the speed is above this threshold.
  * @return
  */
-int dbGetHighSpeedUpperThreshold(void)
+int32_t dbGetHighSpeedUpperThreshold(void)
 {
     return 40000;
 }
 
 /**
- * Get the high speed lower threshold. High Speed condition is exited when the
- * speed is below this threshold.
+ * Get the high speed lower threshold. High Speed condition is exited and Low
+ * Speed condition is entered when the speed is below this threshold.
  * @return
  */
-int dbGetHighSpeedLowerThreshold(void)
+int32_t dbGetHighSpeedLowerThreshold(void)
 {
     return 35000;
 }
 
-int dbGetLowSpeedUpperThreshold(void)
+/**
+ * Get low speed upper threshold. Low Speed condition is entered when the speed
+ * above this threshold.
+ * @return
+ */
+int32_t dbGetLowSpeedUpperThreshold(void)
 {
-    return 0;
+    return 1000;
 }
 
-int dbGetLowSpeedLowerThreshold(void)
+/**
+ * Get low speed lower threshold. Stopped condition is entered when the speed is
+ * below this threshold.
+ * @return
+ */
+int32_t dbGetLowSpeedLowerThreshold(void)
 {
-    return 0;
+    return 500;
 }
 
-int dbGetStoppedUpperThreshold(void)
+/**
+ * Get reversed upper threshold. Reversed condition is entered when the speed
+ * (in reverse) is above this threshold.
+ * @return
+ */
+int32_t dbGetReversedUpperThreshold(void)
 {
-    return 0;
+    return -1000;
 }
 
-int dbGetStoppedLowerThreshold(void)
+/**
+ * Get reversed lower threshold. Reversed condition is exited and Stopped
+ * condition is entered when the speed (in reverse) is below this threshold.
+ * @return
+ */
+int32_t dbGetReversedLowerThreshold(void)
+{
+    return -500;
+}
+
+/**
+ * Return which sensor has been selected for speed measurement.
+ * @return
+ */
+int8_t dbGetSensorIndex(void)
 {
     return 0;
 }

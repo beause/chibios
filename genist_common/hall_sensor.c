@@ -1,8 +1,10 @@
 /**
+ * Copyright 2013 Genist Systems Inc.
  * hall_sensor.c
  *
  * This module interprets the quadrature encoded signals from the Hall sensor
- * inputs.
+ * inputs. These functions are only called if the Hall sensor is actually
+ * selected as the speed sensor.
  *  Created on: 2013-04-29
  *      Author: jeromeg
  */
@@ -18,18 +20,16 @@
 #define NUM_SAMPLES     8
 #define FULL_SCALE      65536
 #define HALL_FREQUENCY  100000
-
+#define MAX_DIRECTION   5
 static void HallSpeedPeriodCB(ICUDriver *icup);
 static void HallSpeedOverflowCB(ICUDriver *icup);
-static int32_t HallSpeed;
+
 /* Average out samples */
 static uint32_t sampleArray[NUM_SAMPLES];
 static uint32_t sampleIndex;
 static uint32_t sampleSum;
 static uint8_t sampleOver;
-static uint8_t direction;
-
-DECLARE_THREAD(ThreadHallSpeed, NORMALPRIO, 1024)
+static int8_t direction;
 
 const ICUConfig HallSpeedSensorConfig = {
         .mode = ICU_INPUT_ACTIVE_HIGH,
@@ -40,6 +40,11 @@ const ICUConfig HallSpeedSensorConfig = {
         .channel = ICU_CHANNEL_2
 };
 
+/**
+ * Callback from ICU driver when the next edge is detected. A running average
+ * over the last NUM_SAMPLES samples is calculated.
+ * @param icup
+ */
 static void HallSpeedPeriodCB(ICUDriver *icup)
 {
     uint32_t oldSample;
@@ -50,11 +55,44 @@ static void HallSpeedPeriodCB(ICUDriver *icup)
     sampleSum += sampleArray[sampleIndex] - oldSample;
     sampleIndex = (sampleIndex + 1) % NUM_SAMPLES;
     sampleOver = 0;
-    direction = palReadPad(GPIOC, GPIOC_TEST_SPEED1_IN);
+    if (palReadPad(GPIOC, GPIOC_TEST_SPEED1_IN))
+    {
+        direction++;
+        if (!direction)
+        {
+            /* don't allow zero */
+            direction = 1;
+        }
+        if (direction > MAX_DIRECTION)
+        {
+            direction = MAX_DIRECTION;
+        }
+    }
+    else
+    {
+        direction--;
+        if (!direction)
+        {
+            /* don't allow zero */
+            direction = -1;
+        }
+        if (direction < -MAX_DIRECTION)
+        {
+            direction = -MAX_DIRECTION;
+        }
+    }
 
 
 }
 
+/**
+ * Callback from ICU driver when the next edge has not occurred before the
+ * timer overflows. A count of overflows is used to add the accumulated count
+ * when the edge eventually comes. If the edge is way off or never arrives,
+ * the it is assumed that the rotation has stopped as indicated by a very long
+ * period
+ * @param icup
+ */
 static void HallSpeedOverflowCB(ICUDriver *icup)
 {
     uint32_t oldSample;
@@ -76,49 +114,34 @@ static void HallSpeedOverflowCB(ICUDriver *icup)
  * Get Hall speed value. This is an average of the last NUM_SAMPLES samples.
  * @return speed in meters per hour.
  */
-float getHallSpeedValue(void)
+int32_t getHallSpeedValue(void)
 {
     float val;
-    uint8_t dir;
-    port_disable();
+    int8_t dir;
+    chSysLock();
     val = dbGetWheelScaleFactor() * HALL_FREQUENCY * SEC_PER_HOUR
             * NUM_SAMPLES / (float) sampleSum;
     dir = direction;
-    port_enable();
+    chSysUnlock();
     if (!dir)
     {
         val = -val;
     }
-    //itmprintf("Sample avg: %d\n", sampleSum / NUM_SAMPLES);
-    return val;
+    return (int32_t) val;
 }
 
-static msg_t ThreadHallSpeed(void *arg)
+/**
+ * Initialize Hall Speed sensor
+ */
+void initHallSpeed(void)
 {
-    uint32_t i;
-    (void) arg;
     sampleOver = 0;
     chRegSetThreadName("HallSpeed");
     memset (sampleArray, 0, sizeof(sampleArray));
-/*
-    for (i = 0; i < NUM_SAMPLES; i++)
-    {
-        sampleArray[i] = 0;
-    }
-*/
     sampleIndex = 0;
     sampleSum = 0;
+    direction = MAX_DIRECTION;
     icuStart(&HALL_SENSOR, &HallSpeedSensorConfig);
     icuEnable(&HALL_SENSOR);
-    while (1)
-    {
-        HallSpeed = (int32_t) getHallSpeedValue();
-        chThdSleepMilliseconds(1000);
-    }
-    return 0;
 }
 
-int32_t ReadSpeed(void)
-{
-    return HallSpeed;
-}
