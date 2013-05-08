@@ -58,6 +58,8 @@
 #define STM32_TIM4_HANDLER          VectorB8
 #define STM32_TIM5_HANDLER          Vector108
 #define STM32_TIM15_HANDLER         VectorA0
+#define STM32_TIM16_HANDLER         VectorA4
+#define STM32_TIM17_HANDLER         VectorA8
 #define STM32_TIM19_HANDLER         Vector178
 
 #define STM32_TIM2_NUMBER           TIM2_IRQn
@@ -65,6 +67,8 @@
 #define STM32_TIM4_NUMBER           TIM4_IRQn
 #define STM32_TIM5_NUMBER           TIM5_IRQn
 #define STM32_TIM15_NUMBER          TIM15_IRQn
+#define STM32_TIM16_NUMBER          TIM16_IRQn
+#define STM32_TIM17_NUMBER          TIM17_IRQn
 #define STM32_TIM19_NUMBER          TIM19_IRQn
 
 /*
