@@ -388,10 +388,10 @@
 #define STM32_HAS_TIM2          TRUE
 #define STM32_HAS_TIM3          TRUE
 #define STM32_HAS_TIM4          TRUE
-#define STM32_HAS_TIM5          FALSE
+#define STM32_HAS_TIM5          TRUE
 #define STM32_HAS_TIM6          TRUE
 #define STM32_HAS_TIM7          TRUE
-#define STM32_HAS_TIM8          TRUE
+#define STM32_HAS_TIM8          FALSE
 #define STM32_HAS_TIM9          FALSE
 #define STM32_HAS_TIM10         FALSE
 #define STM32_HAS_TIM11         FALSE

@@ -373,6 +373,16 @@ typedef void (*adccallback_t)(ADCDriver *adcp, adcsample_t *buffer, size_t n);
 typedef void (*adcerrorcallback_t)(ADCDriver *adcp, adcerror_t err);
 
 /**
+ * @brief   ADC injected conversion callback type.
+ *
+ * @param[in] adcp      pointer to the @p ADCDriver object triggering the
+ *                      injected conversion callback
+ * @param[in] channel   injected channel
+ * @param[in] data      data from injected conversion
+ */
+typedef void (*adcjcallback_t)(ADCDriver *adcp, uint8_t channel, adcsample_t data);
+
+/**
  * @brief   Conversion group configuration structure.
  * @details This implementation-dependent structure describes a conversion
  *          operation.
@@ -397,6 +407,17 @@ typedef struct {
    * @brief   Error callback or @p NULL.
    */
   adcerrorcallback_t        error_cb;
+  /**
+   * @brief   Callback function for injected channels associated to the group or
+   * @p NULL.
+   */
+  adcjcallback_t            endj_cb;
+  /**
+   * @brief   Data word read from JDATAR.
+   * @p NULL.
+   */
+  uint32_t                  jdata;
+
   /* End of the mandatory fields.*/
 
   /**

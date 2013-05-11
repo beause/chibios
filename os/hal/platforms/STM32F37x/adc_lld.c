@@ -139,7 +139,7 @@ static void adc_lld_serve_rx_interrupt(ADCDriver *adcp, uint32_t flags) {
  *
  * @isr
  */
-CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
+CH_IRQ_HANDLER(Vector88) {
   CH_IRQ_PROLOGUE();
 
 #if STM32_ADC_USE_ADC1
@@ -150,6 +150,74 @@ CH_IRQ_HANDLER(ADC1_2_3_IRQHandler) {
 }
 #endif
 
+#if STM32_ADC_USE_SDADC1 || defined(__DOXYGEN__)
+/**
+ * @brief   SDADCD1 interrupt handler to handle injected conversion.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(Vector134) {
+  CH_IRQ_PROLOGUE();
+  uint32_t jdata;
+  if (SDADCD1.sdadc->ISR & SDADC_ISR_JEOCF)
+  {
+      /* Read JDATAR to clear interrupt */
+      jdata = SDADCD1.sdadc->JDATAR;
+      if (SDADCD1.grpp->endj_cb)
+      {
+          SDADCD1.grpp->endj_cb(&SDADCD1, (jdata >> 24), jdata & SDADC_JDATAR_JDATA);
+      }
+  }
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+#if STM32_ADC_USE_SDADC2 || defined(__DOXYGEN__)
+/**
+ * @brief   SDADCD1 interrupt handler to handle injected conversion.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(Vector138) {
+  CH_IRQ_PROLOGUE();
+  uint32_t jdata;
+  if (SDADCD2.sdadc->ISR & SDADC_ISR_JEOCF)
+  {
+      /* Read JDATAR to clear interrupt */
+      jdata = SDADCD2.sdadc->JDATAR;
+      if (SDADCD2.grpp->endj_cb)
+      {
+          SDADCD2.grpp->endj_cb(&SDADCD2, (jdata >> 24), jdata & SDADC_JDATAR_JDATA);
+      }
+  }
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
+
+#if STM32_ADC_USE_SDADC3 || defined(__DOXYGEN__)
+/**
+ * @brief   SDADCD1 interrupt handler to handle injected conversion.
+ *
+ * @isr
+ */
+CH_IRQ_HANDLER(Vector13c) {
+  CH_IRQ_PROLOGUE();
+  uint32_t jdata;
+  if (SDADCD3.sdadc->ISR & SDADC_ISR_JEOCF)
+  {
+      /* Read JDATAR to clear interrupt */
+      jdata = SDADCD3.sdadc->JDATAR;
+      if (SDADCD3.grpp->endj_cb)
+      {
+          SDADCD3.grpp->endj_cb(&SDADCD3, (jdata >> 24), jdata & SDADC_JDATAR_JDATA);
+      }
+  }
+
+  CH_IRQ_EPILOGUE();
+}
+#endif
 /*===========================================================================*/
 /* Driver exported functions.                                                */
 /*===========================================================================*/
@@ -292,10 +360,10 @@ void sdadc_lld_start_cr_init_helper(ADCDriver*     adcdp,
 	reg data overrun interrupt                : disabled
 	reg data end of conversion interrupt      : disabled
 	injected data overrun interrupt           : disabled
-	injected data end of conversion interrupt : disabled
+	injected data end of conversion interrupt : do not modify
 	end of calibration interrupt              : disabled
        */
-      adcdp->sdadc->CR1 = 0;
+      adcdp->sdadc->CR1 &= SDADC_CR1_JEOCIE;
 
       /*
 	====== SDADC CR1 settings breakdown =====
@@ -500,8 +568,19 @@ void adc_lld_start_conversion(ADCDriver *adcdp) {
     sdadcSTM32SetInitializationMode(adcdp, false);
 
     /* SDADC configuration and start, the start is performed using the method
-       specified in the CR2 configuration, usually ADC_CR2_SWSTART.*/
-    adcdp->sdadc->CR1 = grpp->ll.sdadc.cr1 | SDADC_CR1_RDMAEN;
+       specified in the CR2 configuration, usually SDADC_CR2_RSWSTART.*/
+    if (grpp->ll.sdadc.jchgr)
+    {
+        /* Injected channels present. Enable injected conversion complete
+         * interrupt. */
+        adcdp->sdadc->JCHGR = grpp->ll.sdadc.jchgr;
+        adcdp->sdadc->CR1 = grpp->ll.sdadc.cr1 | SDADC_CR1_RDMAEN
+                | SDADC_CR1_JEOCIE;
+    }
+    else
+    {
+        adcdp->sdadc->CR1 = grpp->ll.sdadc.cr1 | SDADC_CR1_RDMAEN;
+    }
     adcdp->sdadc->CR2 = grpp->ll.sdadc.cr2 | SDADC_CR2_ADON;
 
   }
@@ -524,9 +603,10 @@ void adc_lld_stop_conversion(ADCDriver *adcdp) {
     adcdp->adc->CR2 = ADC_CR2_ADON;
   }
   else if (isADCDriverForSigmaDeltaADC(adcdp)) {
-    adcdp->sdadc->CR1 = 0;
+    /* Don't stop injected conversions */
+    adcdp->sdadc->CR1 &= SDADC_CR1_JEOCIE;
     adcdp->sdadc->CR2 = 0;
-    adcdp->sdadc->CR2 = ADC_CR2_ADON;
+    adcdp->sdadc->CR2 = SDADC_CR2_ADON;
   }
 }
 
